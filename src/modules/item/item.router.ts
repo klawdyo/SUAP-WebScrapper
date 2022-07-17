@@ -1,18 +1,12 @@
 import express from "express";
-import Item from "../../models/item";
 import ItemController from "./item.controller";
-import itensRepository from "./item.repository";
 
-const itensRouter = express.Router();
+const router = express.Router();
 
-itensRouter.post("/itens", ItemController.add);
+router.post("/itens", ItemController.add);
+router.get("/itens", ItemController.list);
+router.get("/itens/:id", ItemController.show);
+router.put("/itens/:id", ItemController.update);
+router.delete("/itens/:id", ItemController.delete);
 
-itensRouter.get("/itens", ItemController.list);
-
-itensRouter.get("/itens/:id", ItemController.show);
-
-itensRouter.put("/itens/:id", ItemController.update);
-
-itensRouter.delete("/itens/:id", ItemController.delete);
-
-export default itensRouter;
+export default router;
