@@ -1,4 +1,10 @@
-import itemRouter from "./modules/item/item.router";
-import suapRouter from "./modules/suap/auth/auth.router";
+// import itemRouter from "./modules/item/item.router";
+import suapAuthRouter from "./modules/suap/auth/auth.router";
+import suapUserRouter from "./modules/suap/user/user.router";
 
-export default [itemRouter, suapRouter];
+export default [
+  //
+  // itemRouter,
+  suapAuthRouter,
+  suapUserRouter,
+];
