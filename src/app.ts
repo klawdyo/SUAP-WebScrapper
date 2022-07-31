@@ -13,12 +13,16 @@ import cors from "cors";
 import helmet from "helmet";
 
 import router from "./routes";
+import DB from "./lib/database";
+import Output from "./lib/output";
 
 class AppController {
   express;
 
   constructor() {
     this.express = express();
+
+    DB.init();
 
     this.middlewares();
     this.routes();
@@ -29,6 +33,7 @@ class AppController {
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(cors());
     this.express.use(helmet());
+    this.express.use(Output.middleware);
   }
 
   routes() {
