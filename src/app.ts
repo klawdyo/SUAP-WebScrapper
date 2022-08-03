@@ -13,7 +13,6 @@ import cors from "cors";
 import helmet from "helmet";
 
 import router from "./routes";
-import DB from "./lib/database";
 import Output from "./lib/output";
 
 class AppController {
@@ -21,8 +20,6 @@ class AppController {
 
   constructor() {
     this.express = express();
-
-    DB.init();
 
     this.middlewares();
     this.routes();

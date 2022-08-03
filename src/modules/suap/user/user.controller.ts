@@ -25,7 +25,7 @@ export default class UserController {
 
       console.log(user);
 
-      return response.status(200).json({ ok: true });
+      return response.status(200).json(user);
     } catch (error) {}
   }
 
@@ -58,24 +58,14 @@ export default class UserController {
 
       const user = await userRepository.save(payload);
 
-      console.log("payload: ", payload);
-      console.log("user: ", user);
+      // console.log("payload: ", payload);
+      // console.log("user: ", user);
 
       // return response.status(200).json(user);
       return Output.success(user);
     } catch (error: Error | any) {
-      // console.log(error);
       let message = "Erro desconhecido";
-
-      switch (error["code"]) {
-        case "SQLITE_CONSTRAINT":
-          message = "Matrícula já cadastrada";
-      }
-
-      // return response.status(400).json({ error: true, message });
-      // return Output.unauthorized(null, message);
       return Output.badRequest(null, message);
-      // return Output.error(400, null, message);
     }
   }
 }
