@@ -13,17 +13,7 @@ export default class UserController {
    */
   static async profile(request: Request, response: Response) {
     try {
-      // const user = new User({
-      //   id: 1673621,
-      //   name: "Cláudio Medeiros",
-      //   image: "foto.jpeg",
-      // });
-
-      // userRepository.save(user);
-
       const user = await userRepository.first(1673621);
-
-      console.log(user);
 
       return response.status(200).json(user);
     } catch (error) {}
@@ -54,18 +44,26 @@ export default class UserController {
     try {
       const payload = new User(request.body);
 
-      // const user = await userRepository.all();
-
       const user = await userRepository.save(payload);
-
-      // console.log("payload: ", payload);
-      // console.log("user: ", user);
-
-      // return response.status(200).json(user);
       return Output.success(user);
     } catch (error: Error | any) {
-      let message = "Erro desconhecido";
-      return Output.badRequest(null, message);
+      return Output.exception(error);
+    }
+  }
+
+  /**
+   *
+   * @param req
+   * @param res
+   */
+  static async delete(request: Request, response: Response) {
+    try {
+      const id = +request.params.id;
+
+      const user = await userRepository.delete(id);
+      return Output.success(user);
+    } catch (error: Error | any) {
+      return Output.exception(error);
     }
   }
 }
