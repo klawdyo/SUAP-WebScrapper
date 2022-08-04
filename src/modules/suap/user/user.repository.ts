@@ -1,5 +1,5 @@
 import User from "../../../models/user";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient().user;
 
 export default {
