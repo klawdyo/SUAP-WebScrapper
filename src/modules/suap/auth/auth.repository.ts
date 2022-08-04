@@ -1,5 +1,6 @@
-import User from "../../../models/user";
-import DB from "../../../lib/database";
+import Auth from "../../../models/auth";
+import { PrismaClient } from "@prisma/client";
+const db = new PrismaClient().user;
 
 export default {
   // 1) adicione o token. se tiver, atualiza. se não tiver, cria um novo
