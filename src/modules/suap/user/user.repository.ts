@@ -1,4 +1,4 @@
-import User from "../../../models/user";
+import User from "models/user";
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient().user;
 
@@ -44,8 +44,26 @@ export default {
    * @param id
    * @returns
    */
-  first: async (matricula: number): Promise<User> => {
-    const result = await db.findFirst({ where: { matricula } });
+  first: async (
+    matricula: number | null,
+    id?: number | undefined
+  ): Promise<User | null> => {
+    //
+    if (!id && !matricula)
+      throw {
+        code: 500,
+        message: "Informe pelo menos um id ou a matrícula do servidor",
+      };
+
+    let result = null;
+
+    if (id) {
+      result = await db.findFirst({ where: { id } });
+    } else if (matricula) {
+      result = await db.findFirst({ where: { matricula } });
+    }
+
+    if (!result) return null;
 
     return new User(result);
   },
@@ -56,19 +74,16 @@ export default {
     return result.map((user: Record<string, any>) => new User(user));
   },
 
-  delete: async (
-    id: number | null | undefined = null,
-    matricula?: number
-  ): Promise<boolean> => {
+  delete: async (user: User): Promise<boolean> => {
     try {
-      if (!id && !matricula)
+      if (!user)
         throw { code: 403, message: "É necessário informar matrícula ou id" };
 
-      const where = id ? { id } : { matricula };
+      const where = user.id ? { id: user.id } : { matricula: user.matricula };
 
-      const user = await db.findFirst({ where });
+      const result = await db.findFirst({ where });
 
-      if (!user)
+      if (!result)
         throw {
           code: 404,
           message: "Usuário não encontrado",
