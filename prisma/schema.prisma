@@ -25,9 +25,8 @@ model User {
 
 model Token {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    Int      @unique
   cookie    String
-  active    Boolean  @default(true)
   // Relacionamento com o usuário
   user      User     @relation(fields: [userId], references: [id])
   // Data/hora de criação e atualização
