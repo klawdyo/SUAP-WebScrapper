@@ -1,17 +1,42 @@
-import User from "../../../models/user";
-import DB from "../../../lib/database";
+import User from "models/user";
+import { PrismaClient } from "@prisma/client";
+const db = new PrismaClient().user;
 
 export default {
   /**
-   * Salvar ou editar um item.
-   * Se informar o id, edita
+   * Salva um usuário usando a matrícula como índice. Se a matrícula informada
+   * já existir, altera as informações. Se a matrícula não existir, então é
+   * um usuário novo e deve ser cadastrado.
    *
    * @param payload
    * @param id
    */
-  save: async (payload: User, id: number | null = null) => {
-    DB.setTable("users");
-    return await DB.save(payload, id);
+  save: async (payload: User): Promise<User> => {
+    try {
+      const user = await db.findFirst({
+        where: {
+          OR: [{ matricula: payload.matricula }, { email: payload.email }],
+        },
+      });
+
+      let result = {};
+
+      if (user) {
+        result = await db.update({
+          where: { matricula: payload.matricula },
+          data: payload.toJSON(),
+        });
+      } else {
+        result = await db.create({
+          data: payload.toJSON(),
+        });
+      }
+
+      return new User(result);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   },
 
   /**
@@ -19,63 +44,60 @@ export default {
    * @param id
    * @returns
    */
-  first: async (id: number): Promise<User> => {
-    DB.setTable("users");
-    const user = await DB.find(id);
+  first: async (
+    matricula: number | null,
+    id?: number | undefined
+  ): Promise<User | null> => {
+    //
+    if (!id && !matricula)
+      throw {
+        code: 500,
+        message: "Informe pelo menos um id ou a matrícula do servidor",
+      };
 
-    return new User(user);
+    let result = null;
+
+    if (id) {
+      result = await db.findFirst({ where: { id } });
+    } else if (matricula) {
+      result = await db.findFirst({ where: { matricula } });
+    }
+
+    if (!result) return null;
+
+    return new User(result);
   },
 
-  all: async (
-    where: Record<string, number | string> | null = null
-  ): Promise<User[]> => {
-    DB.setTable("users");
-    const result = await DB.search(where);
+  all: async (where: Record<string, number | string> = {}): Promise<User[]> => {
+    const result = await db.findMany({ where });
 
     return result.map((user: Record<string, any>) => new User(user));
   },
 
-  /*
-  criar: (item: Item, callback: (id?: number) => void) => {
-    const sql = "INSERT INTO itens (nome, descricao) VALUES (?, ?)";
-    const params = [item.nome, item.descricao];
-    database.run(sql, params, function (_err) {
-      callback(this?.lastID);
-    });
-  },
+  delete: async (user: User): Promise<boolean> => {
+    try {
+      if (!user)
+        throw { code: 403, message: "É necessário informar matrícula ou id" };
 
-  lerTodos: (callback: (itens: Item[]) => void) => {
-    const sql = "SELECT * FROM itens";
-    const params: any[] = [];
-    database.all(sql, params, (_err, rows) => callback(rows));
-  },
+      const where = user.id ? { id: user.id } : { matricula: user.matricula };
 
-  ler: (id: number, callback: (item?: Item) => void) => {
-    const sql = "SELECT * FROM itens WHERE id = ?";
-    const params = [id];
-    database.get(sql, params, (_err, row) => callback(row));
-  },
+      const result = await db.findFirst({ where });
 
-  atualizar: (
-    id: number,
-    item: Item,
-    callback: (notFound: boolean) => void
-  ) => {
-    const sql = "UPDATE itens SET nome = ?, descricao = ? WHERE id = ?";
-    const params = [item.nome, item.descricao, id];
-    database.run(sql, params, function (_err) {
-      callback(this.changes === 0);
-    });
-  },
+      if (!result)
+        throw {
+          code: 404,
+          message: "Usuário não encontrado",
+        };
 
-  apagar: (id: number, callback: (notFound: boolean) => void) => {
-    const sql = "DELETE FROM itens WHERE id = ?";
-    const params = [id];
-    database.run(sql, params, function (_err) {
-      callback(this.changes === 0);
-    });
+      await db.delete({
+        where,
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+
+      throw error;
+    }
   },
-  */
 };
-
-// export default repository;

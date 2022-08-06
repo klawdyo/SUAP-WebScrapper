@@ -1,0 +1,31 @@
+# Para uso com a extensão REST Client
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+@url = http://localhost:4000
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYXRyaWN1bGEiOjE2NzM2MjEsImlhdCI6MTY1OTgwNjk2NiwiZXhwIjoxNjU5ODkzMzY2fQ.b6bIfgqHrfRt3az9oPtgjv-N1M33padXxP68jjISXTM
+
+
+### Lista todos os usuários
+GET {{url}}/suap/users
+
+
+### Cadastra um usuário a partir dos dados
+POST {{url}}/suap/users
+content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "matricula": 3220931,
+    "name": "Andreia Maria da Silva",
+    "email": "andreia.silva@ifrn.edu.br",
+    "image": "https://suap.ifrn.edu.br/media/fotos/75x100/363054.6eAmBRGwkEuU.jpg"
+}
+
+### Cadastra um usuário a partir da matrícula
+POST {{url}}/suap/users/by_matricula
+content-type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "matricula": 1936507
+}
