@@ -13,7 +13,17 @@ import cors from "cors";
 import helmet from "helmet";
 
 import router from "./routes";
-import Output from "./lib/output";
+import Output from "lib/output";
+import User from "models/user";
+
+// Inclui o valor de usuário logado na interface do request
+declare global {
+  namespace Express {
+    interface Request {
+      user: User | null;
+    }
+  }
+}
 
 class AppController {
   express;
