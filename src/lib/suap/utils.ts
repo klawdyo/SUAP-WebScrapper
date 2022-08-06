@@ -5,9 +5,15 @@ import cheerio from "cheerio";
  * @param cookies
  * @returns
  */
-export function cookieParser(cookies: string[] | undefined = []): string {
-  if (cookies === undefined || cookies === null || !Array.isArray(cookies)) {
+export function cookieParser(
+  cookies: string | string[] | undefined = []
+): string {
+  if (cookies === undefined || cookies === null) {
     return "";
+  }
+
+  if (typeof cookies === "string") {
+    cookies = cookies.split(";");
   }
 
   const rgx = /(__Host-(?:[a-z-]+)\=[\=\"A-Za-z0-9_-]+)/i;
