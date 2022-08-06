@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { NextFunction, Request, Response, Send } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 
 export default class Output {
   /**
@@ -177,6 +178,24 @@ export default class Output {
     }
 
     //
+    // JsonWebTokenError
+    //
+    //
+    else if (e instanceof JsonWebTokenError) {
+      const messages: Record<string, string> = {
+        "jwt malformed": "Token de autenticação inválido", // token não tá no padrão separado por pontos
+        "invalid token": "Token de autenticação inválido", // token não está válido
+        "jwt expired": "Token de autenticação expirado", // token expirado
+      };
+
+      return Output.error(
+        401,
+        null,
+        message || messages[e.message] || "Token de autenticação inválido"
+      );
+    }
+
+    //
     //
     // Padrão
     //
@@ -196,6 +215,43 @@ export default class Output {
    */
   static middleware(request: Request, response: Response, next: NextFunction) {
     Output.response(response);
+
+    response.success = (data: any, message: string | null) =>
+      Output.success(data, message);
+
+    response.error = (status: number, data: any, message: string | null) =>
+      Output.error(status, data, message);
+
+    response.exception = (e: any, message: string | null) =>
+      Output.exception(e, message);
+
+    response.notFound = (data: any, message: string | null) =>
+      Output.notFound(data, message);
+
+    response.forbidden = (data: any, message: string | null) =>
+      Output.forbidden(data, message);
+
+    response.badRequest = (data: any, message: string | null) =>
+      Output.badRequest(data, message);
+
+    response.unauthorized = (data: any, message: string | null) =>
+      Output.unauthorized(data, message);
+
     next();
+  }
+}
+
+// Inclui o valor de usuário logado na interface do Response
+declare global {
+  namespace Express {
+    interface Response {
+      success: any;
+      error: any;
+      exception: any;
+      notFound: any;
+      forbidden: any;
+      badRequest: any;
+      unauthorized: any;
+    }
   }
 }
