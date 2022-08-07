@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
+import SUAP from "lib/suap";
+import Person, { autocompletePerson } from "models/person";
 import User from "models/user";
 import authRepository from "../auth/auth.repository";
+import { controlSearchPeople } from "./values/control";
 
 export default class PersonController {
   /**
@@ -11,44 +14,30 @@ export default class PersonController {
    */
   static async searchPeople(request: Request, response: Response) {
     try {
-      console.log("entrou");
-
-      const { term: string = "" } = request.query;
+      const { term = "" } = request.query;
       const cookie = await authRepository.getCookie(request.user as User);
 
-      console.log("cookinho", cookie);
+      const result = await SUAP.setCookie(cookie)
+        .addHeaders({
+          "Content-Type": "application/x-www-form-urlencoded",
+          charset: "UTF-8",
+        })
+        .post("/json/comum/vinculo/", {
+          q: term,
+          control: controlSearchPeople,
+          search_fields: "search",
+        });
 
-      response.success({});
-    } catch (error) {
-      response.exception(error);
-    }
-  }
+      // console.log("result", result);
 
-  /**
-   * Pesquisa alunos
-   *
-   * @param term Termo de busca
-   */
-  static async searchStudents(request: Request, response: Response) {
-    try {
-      const { term: string = "" } = request.query;
+      const { items = [] } = JSON.parse(result);
 
-      response.success({});
-    } catch (error) {
-      response.exception(error);
-    }
-  }
+      // return items.map((person as Record<string, any>) => new Person(person) )
+      const peopleList = items.map((item: autocompletePerson) =>
+        Person.fromAutocomplete(item)
+      );
 
-  /**
-   * Pesquisa servidores
-   *
-   * @param term Termo de busca
-   */
-  static async searchEmployees(request: Request, response: Response) {
-    try {
-      const { term: string = "" } = request.query;
-
-      response.success({});
+      response.success(peopleList);
     } catch (error) {
       response.exception(error);
     }

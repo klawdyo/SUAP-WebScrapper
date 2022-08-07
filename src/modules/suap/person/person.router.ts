@@ -10,16 +10,4 @@ router.get(
   PesrsonController.searchPeople
 );
 
-router.get(
-  "/suap/people/search_students",
-  [authMiddleware],
-  PesrsonController.searchStudents
-);
-
-router.get(
-  "/suap/people/search_employees",
-  [authMiddleware],
-  PesrsonController.searchEmployees
-);
-
 export default router;
