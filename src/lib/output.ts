@@ -205,6 +205,14 @@ export default class Output {
     }
 
     //
+    // SyntaxError
+    //
+    //
+    else if (e instanceof SyntaxError) {
+      return Output.error(500, { name: e.name, message: e.message });
+    }
+
+    //
     //
     // Padrão
     //
