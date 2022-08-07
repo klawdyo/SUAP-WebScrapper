@@ -5,19 +5,19 @@ import PesrsonController from "./person.controller";
 const router = express.Router();
 
 router.get(
-  "/suap/users/search_people",
+  "/suap/people/search",
   [authMiddleware],
   PesrsonController.searchPeople
 );
 
 router.get(
-  "/suap/users/search_students",
+  "/suap/people/search_students",
   [authMiddleware],
   PesrsonController.searchStudents
 );
 
 router.get(
-  "/suap/users/search_employees",
+  "/suap/people/search_employees",
   [authMiddleware],
   PesrsonController.searchEmployees
 );

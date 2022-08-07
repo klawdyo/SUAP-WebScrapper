@@ -11,7 +11,7 @@ export default [
   // itemRouter,
   suapAuthRouter,
   suapUserRouter,
-  // suapPersonRouter,
+  suapPersonRouter,
 
   // Rota de erro
   errorRouter,
