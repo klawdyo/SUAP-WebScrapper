@@ -1,10 +1,12 @@
 import express from "express";
-// import Item from "../../../models/item";
 import AuthController from "./auth.controller";
-// import itensRepository from "./item.repository";
+import authMiddleware from "./auth.middleware";
+import loginValidator from "./validators/login.validator";
 
 const router = express.Router();
 
-router.get("/suap/auth/login", AuthController.login);
+router.post("/suap/auth/login", [loginValidator], AuthController.login);
+router.post("/suap/auth/logged", AuthController.logged);
+router.get("/suap/auth/profile", [authMiddleware], AuthController.profile);
 
 export default router;

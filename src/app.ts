@@ -13,6 +13,17 @@ import cors from "cors";
 import helmet from "helmet";
 
 import router from "./routes";
+import Output from "lib/output";
+import User from "models/user";
+
+// Inclui o valor de usuário logado na interface do request
+declare global {
+  namespace Express {
+    interface Request {
+      user: User | null;
+    }
+  }
+}
 
 class AppController {
   express;
@@ -29,6 +40,7 @@ class AppController {
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(cors());
     this.express.use(helmet());
+    this.express.use(Output.middleware);
   }
 
   routes() {

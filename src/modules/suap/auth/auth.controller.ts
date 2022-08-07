@@ -1,98 +1,81 @@
 import { Request, Response } from "express";
 
-import { gotScraping } from "got-scraping";
-import { cookieParser, getCSRFMmiddlewareToken } from "./lib/parser";
+import userRepository from "../user/user.repository";
+import authRepository from "./auth.repository";
+
+import login from "./lib/login";
 
 export default class AuthController {
   /**
+   * Realiza login
    *
-   * @param req
-   * @param res
+   * Method: POST
+   * URL: /suap/auth/login
+   * Body: {
+   *  matricula: integer
+   * }
    */
   static async login(request: Request, response: Response) {
-    const result = await gotScraping.get(
-      "https://suap.ifrn.edu.br/accounts/login/?next=/",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "user-agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          Host: "suap.ifrn.edu.br",
-          Origin: "https://suap.ifrn.edu.br",
-          Pragma: "no-cache",
-          Referer: "https://suap.ifrn.edu.br/accounts/login/",
-        },
-      }
-    );
+    try {
+      const { matricula, password } = request.body;
 
-    console.log("Headers", result.headers);
-    // return;
+      const result = await login(matricula, password);
 
-    const csrfToken = getCSRFMmiddlewareToken(result.body);
-    const cookies = cookieParser(result.headers["set-cookie"]);
-    console.log("cookies", cookies);
+      //
+      return response.success(result, "Login realizado com sucesso");
+    } catch (error) {
+      return response.exception(error);
+    }
+  }
 
-    const payload = {
-      csrfmiddlewaretoken: csrfToken ?? "",
-      username: process.env.SUAP_USER ?? "",
-      password: process.env.SUAP_PASS ?? "",
-      this_is_the_login_form: "1",
-      next: "/",
-      "g-recaptcha-response": "",
-    };
+  /**
+   * Pega os dados do perfil do usuário
+   *
+   * Method: GET
+   * URL: /suap/auth/profile
+   */
+  static async profile(request: Request, response: Response) {
+    try {
+      return response.success(request.user);
+    } catch (error) {
+      return response.exception(error);
+    }
+  }
 
-    console.log("payload:", payload);
+  /**
+   * Verifica se o usuário está logado
+   *
+   * Method: POST
+   * URL: /suap/auth/logged
+   * Body: {
+   *  matricula: integer
+   * }
+   */
+  static async logged(request: Request, response: Response) {
+    try {
+      // Se a matrícula foi informada
+      const matricula = request.body?.matricula;
+      if (!matricula)
+        throw {
+          code: 403,
+          message: "Matrícula não informada",
+        };
 
-    const login = await gotScraping.post(
-      "https://suap.ifrn.edu.br/accounts/login/",
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "user-agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          Cookie: cookies,
-          Host: "suap.ifrn.edu.br",
-          Origin: "https://suap.ifrn.edu.br",
-          Pragma: "no-cache",
-          Referer: "https://suap.ifrn.edu.br/accounts/login/",
-        },
-        // json: payload,
-        // body: JSON.stringify(payload),
-        // body: new URLSearchParams(payload).toString(),
-        form: payload,
-        // maxRedirects: 50,
-        followRedirect: false,
-      }
-    );
+      // Se o usuário foi encontrado no banco de dados
+      const user = await userRepository.first(matricula);
+      if (!user)
+        throw {
+          code: 404,
+          message: "Matrícula não encontrada",
+        };
 
-    console.log("retorno", login.headers);
-    console.log("retorn bo", login.body);
-    console.log(cookieParser(login.headers["set-cookie"]));
+      // Verifica se o usuário enconrado possui um token salvo e válido
+      const isLogged = await authRepository.isLogged(user);
 
-    const home = await gotScraping.get("https://suap.ifrn.edu.br/", {
-      headers: {
-        "user-agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-        Cookie: cookieParser(login.headers["set-cookie"]),
-        Host: "suap.ifrn.edu.br",
-        Origin: "https://suap.ifrn.edu.br",
-        Pragma: "no-cache",
-        Referer: "https://suap.ifrn.edu.br/",
-      },
-      // json: payload,
-      // body: JSON.stringify(payload),
-      // body: new URLSearchParams(payload).toString(),
-      // form: payload,
-      // maxRedirects: 50,
-      // followRedirect: false,
-    });
-
-    console.log("inicio", home.headers);
-    console.log("inicio", home.body);
-
-    //
-    return response.json({
-      olar: true,
-    });
+      // Retorna
+      return response.success({ is_logged: isLogged });
+    } catch (error) {
+      return response.exception(error);
+    }
   }
 }
