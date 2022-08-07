@@ -16,7 +16,7 @@ export function cookieParser(
     cookies = cookies.split(";");
   }
 
-  const rgx = /(__Host-(?:[a-z-]+)\=[\=\"A-Za-z0-9_-]+)/i;
+  const rgx = /(__Host-(?:[a-z-]+)\=[\=\"\\A-Za-z0-9_-]+)/i;
 
   return (cookies as string[])
     .map((item: string) => {
@@ -27,7 +27,8 @@ export function cookieParser(
       }
     })
     .filter((item: string | undefined) => item)
-    .join("; ");
+    .join("; ")
+    .replace(/\\/g, "");
 }
 
 /**

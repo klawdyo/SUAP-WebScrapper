@@ -26,6 +26,14 @@ class User {
 
     // return result;
   }
+
+  isEmpty() {
+    return !this.matricula && !this.id;
+  }
+
+  isNotEmpty() {
+    return !this.isEmpty();
+  }
 }
 
 export default User;

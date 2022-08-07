@@ -56,7 +56,7 @@ class SUAP {
     cookies?: string[] | undefined
   ): Promise<string> {
     try {
-      const result = await gotScraping.get(this.url(path), {
+      const result = await gotScraping.post(this.url(path), {
         headers: this.getHeaders(cookies),
         form: data,
       });
@@ -243,10 +243,6 @@ class SUAP {
 
     return this;
   }
-
-  /**
-   * Converte os cookies de string para array
-   */
 }
 
 export default SUAP;

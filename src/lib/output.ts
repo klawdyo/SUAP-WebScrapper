@@ -48,8 +48,8 @@ export default class Output {
    * @returns
    */
   static error(
-    status: number,
-    data: any,
+    status: number = 500,
+    data: any = null,
     message: string | null = "Erro ao realizar a operação"
   ) {
     return this._response?.status(status).json({
@@ -68,7 +68,7 @@ export default class Output {
    * @returns
    */
   static notFound = (data: any, message: string | null) =>
-    Output.error(404, data, message);
+    Output.error(404, data, message || "Página não encontrada");
 
   /**
    * Requisição proibida
@@ -78,7 +78,7 @@ export default class Output {
    * @returns
    */
   static forbidden = (data: any, message: string | null) =>
-    Output.error(403, data, message);
+    Output.error(403, data, message || "Requisição não permitida");
 
   /**
    * Requisição mal formada
@@ -88,7 +88,7 @@ export default class Output {
    * @returns
    */
   static badRequest = (data: any, message: string | null) =>
-    Output.error(400, data, message);
+    Output.error(400, data, message || "Esta requisição está mal formatada");
 
   /**
    * Requisição não autorizada
@@ -98,7 +98,7 @@ export default class Output {
    * @returns
    */
   static unauthorized = (data: any, message: string | null) =>
-    Output.error(401, data, message);
+    Output.error(401, data, message || "Acesso não autorizado");
 
   /**
    * Trata uma exceção recebida e retorna uma mensagem padronizada
@@ -202,6 +202,14 @@ export default class Output {
     //
     else if (e instanceof Joi.ValidationError) {
       return Output.error(400, e.details, message || "Erro de validação");
+    }
+
+    //
+    // SyntaxError
+    //
+    //
+    else if (e instanceof SyntaxError) {
+      return Output.error(500, { name: e.name, message: e.message });
     }
 
     //
