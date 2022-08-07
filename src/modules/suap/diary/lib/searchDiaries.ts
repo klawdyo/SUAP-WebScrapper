@@ -1,10 +1,10 @@
 // Os dados desta página vieram da página de criação de mensagem do comunicador
 // https://suap.ifrn.edu.br/edu/enviar_mensagem/
 
-import { Year } from "@prisma/client";
 import SUAP from "lib/suap";
 import Campus from "models/campus";
 import Diary, { autocompleteDiary } from "models/diary";
+import Year from "models/year";
 import { controlSearchDiaryMessenger } from "../values/control";
 
 type diaryOptions = {
