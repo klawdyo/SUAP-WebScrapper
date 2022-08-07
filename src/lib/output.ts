@@ -48,8 +48,8 @@ export default class Output {
    * @returns
    */
   static error(
-    status: number,
-    data: any,
+    status: number = 500,
+    data: any = null,
     message: string | null = "Erro ao realizar a operação"
   ) {
     return this._response?.status(status).json({
