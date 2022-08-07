@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import SUAP from "lib/suap";
 
 export default class Person {
   suapId: number = -1;
@@ -39,7 +40,7 @@ export default class Person {
       const $ = load(person.html);
 
       // Imagem
-      result.image = $("img").attr("src") || "";
+      result.image = SUAP.baseURL + $("img").attr("src") || "";
 
       // Setor - Para terceirizados e servidores
       result.sector = $("dt:contains(Setor)").next("dd").text();
