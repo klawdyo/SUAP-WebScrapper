@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
-import { NextFunction, Request, Response, Send } from "express";
+import { NextFunction, Request, Response } from "express";
+import Joi from "joi";
 import { JsonWebTokenError } from "jsonwebtoken";
 
 export default class Output {
@@ -193,6 +194,14 @@ export default class Output {
         null,
         message || messages[e.message] || "Token de autenticação inválido"
       );
+    }
+
+    //
+    // ValidationError
+    //
+    //
+    else if (e instanceof Joi.ValidationError) {
+      return Output.error(400, e.details, message || "Erro de validação");
     }
 
     //

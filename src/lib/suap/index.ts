@@ -11,6 +11,11 @@ class SUAP {
   static cookies?: string[] | undefined;
 
   /**
+   *
+   */
+  static _additionalHeaders: Record<string, any> = {};
+
+  /**
    * URL de base
    */
   static baseURL = "https://suap.ifrn.edu.br";
@@ -67,77 +72,117 @@ class SUAP {
    */
   static async getCookie(matricula: String, password: String): Promise<string> {
     try {
+      // Requisita a página inicial
       const result = await gotScraping.get(
         "https://suap.ifrn.edu.br/accounts/login/?next=/",
         {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "user-agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-            Host: "suap.ifrn.edu.br",
-            Origin: "https://suap.ifrn.edu.br",
-            Pragma: "no-cache",
-            Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          },
+          headers: this.getHeaders(),
+          // headers: {
+          //   "Content-Type": "application/x-www-form-urlencoded",
+          //   "user-agent":
+          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+          //   Host: "suap.ifrn.edu.br",
+          //   Origin: "https://suap.ifrn.edu.br",
+          //   Pragma: "no-cache",
+          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
+          // },
         }
       );
 
-      // console.log("Headers", result.headers);
-      // return;
-
+      // Pega o CSRF token de dentro do html da página
       const csrfToken = getCSRFMmiddlewareToken(result.body);
-      const cookies = cookieParser(result.headers["set-cookie"]);
-      // console.log("cookies", cookies);
 
+      // Pega os cookies iniciais ao acessar a página
+      const initialCookies = cookieParser(result.headers["set-cookie"]);
+
+      // Cria o payload inicial para fazer o login
       const payload = {
         csrfmiddlewaretoken: csrfToken ?? "",
-        username: process.env.SUAP_USER ?? "",
-        password: process.env.SUAP_PASS ?? "",
+        username: matricula,
+        password: password,
         this_is_the_login_form: "1",
         next: "/",
         "g-recaptcha-response": "",
       };
 
-      // console.log("payload:", payload);
-
+      // Efetua o login
       const login = await gotScraping.post(
         "https://suap.ifrn.edu.br/accounts/login/",
         {
-          headers: {
+          headers: this.addHeaders({
             "Content-Type": "application/x-www-form-urlencoded",
-            "user-agent":
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-            Cookie: cookies,
-            Host: "suap.ifrn.edu.br",
-            Origin: "https://suap.ifrn.edu.br",
-            Pragma: "no-cache",
-            Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          },
-          // json: payload,
-          // body: JSON.stringify(payload),
-          // body: new URLSearchParams(payload).toString(),
+          }).getHeaders(initialCookies),
+          // headers: {
+          //   "Content-Type": "application/x-www-form-urlencoded",
+          //   "user-agent":
+          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+          //   Cookie: initialCookies,
+          //   Host: "suap.ifrn.edu.br",
+          //   Origin: "https://suap.ifrn.edu.br",
+          //   Pragma: "no-cache",
+          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
+          // },
           form: payload,
-          // maxRedirects: 50,
           followRedirect: false,
         }
       );
 
-      // console.log("retorno", login.headers);
-      // console.log("retorn bo", login.body);
-      // console.log(cookieParser(login.headers["set-cookie"]));
+      // Os cookies retornados após o login
+      const loggedCookies = login.headers["set-cookie"];
 
-      const cookie = login.headers["set-cookie"];
-
-      if (!cookie)
+      // Se existem cookies retornados
+      if (!loggedCookies)
         throw {
-          code: 401,
+          code: 403,
           message: "Erro ao realizar login",
         };
 
-      return JSON.stringify(login.headers["set-cookie"]);
+      // O SUAP inicialmente retorna 2 cookies: sessionid e csrftoken
+      // Estes 2 são retornados em todas as requisições, independente
+      // de estar ou não estar logado
+      // Já o cookie 'suap-control' só é retornado com o usuário logado
+      // Dessa forma, se ele for encontrado nos cookies retornados o
+      // login aconteceu com sucesso
+      const hasSuapControl = loggedCookies?.some((cookie) =>
+        cookie.startsWith("__Host-suap-control")
+      );
+
+      // Verifica se contém o cookie específico de logado do SUAP
+      if (hasSuapControl) {
+        return JSON.stringify(login.headers["set-cookie"]);
+      }
+      // Não foi encontrado o cookie suap-control nos cookies retornados
+      else {
+        throw {
+          code: 403,
+          message: "Usuário ou senha inválidos",
+        };
+      }
+
+      // S
     } catch (error) {
       throw error;
     }
+  }
+
+  /**
+   * Insere o cookie na requisição
+   *
+   * @param cookies
+   * @returns
+   */
+  static setCookie(cookies?: string | string[] | undefined | null) {
+    // Se for string
+    if (
+      cookies !== null &&
+      cookies !== undefined &&
+      typeof cookies === "string"
+    ) {
+      cookies = cookies?.split(";");
+    }
+
+    this.cookies = cookies ? cookies : [];
+    return this;
   }
 
   // ///////////////////////////////////////////////
@@ -169,33 +214,39 @@ class SUAP {
    * @param cookies
    * @returns
    */
-  static getHeaders(cookies?: string[] | undefined): Headers {
-    const headers = {
+  static getHeaders(cookies?: string | string[] | undefined): Headers {
+    let headers = {
       "user-agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
       Cookie: "",
+
       Host: "suap.ifrn.edu.br",
       Origin: "https://suap.ifrn.edu.br",
       Pragma: "no-cache",
       Referer: "https://suap.ifrn.edu.br/",
     };
 
-    if (cookies) headers.Cookie = cookieParser(cookies);
+    // Adiciona os cookies caso haja algum
+    if (cookies !== undefined) headers.Cookie = cookieParser(cookies);
     else if (this.cookies) headers.Cookie = cookieParser(this.cookies);
+
+    // Se existirem cabeçalhos adicionais
+    if (this._additionalHeaders) {
+      headers = { ...headers, ...this._additionalHeaders };
+    }
 
     return headers;
   }
 
-  /**
-   * Insere o cookie na requisição
-   *
-   * @param cookies
-   * @returns
-   */
-  static setCookie(cookies?: string | string[] | undefined | null) {
-    this.cookies = Array.isArray(cookies) ? cookies : cookies?.split(";");
+  static addHeaders(headers: Record<string, any>) {
+    this._additionalHeaders = headers;
+
     return this;
   }
+
+  /**
+   * Converte os cookies de string para array
+   */
 }
 
 export default SUAP;
