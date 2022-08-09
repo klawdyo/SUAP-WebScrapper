@@ -15,7 +15,8 @@ describe("Model Person", () => {
 
     expect(result).toMatchObject({
       suapId: 40058,
-      image: "/media/fotos/75x100/2543.LafUPyr4RD2t.jpg",
+      image:
+        "https://suap.ifrn.edu.br/media/fotos/75x100/2543.LafUPyr4RD2t.jpg",
       name: "Jose Claudio Medeiros de Lima",
       matricula: 1673621,
       type: personType.SERVIDOR,
@@ -39,7 +40,7 @@ describe("Model Person", () => {
     expect(result).toMatchObject({
       suapId: 367830,
       name: "Ana Vitória Barbalho da Siva",
-      image: "/static/comum/img/default.jpg",
+      image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
       matricula: 202110510650035,
       course:
         "051065 - ProiTEC - Programa de Iniciação Tecnológica e Cidadania (CAMPUS IPANGUAÇU)",
@@ -61,7 +62,7 @@ describe("Model Person", () => {
     expect(result).toMatchObject({
       suapId: 225934,
       name: "Francisco Elizon Dantas",
-      image: "/static/comum/img/default.jpg",
+      image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
       cpf: "02539150403",
       sector:
         "IFRN → RE → DG/IP → DIAD/IP → COSGEM/IP (Coordenação de Serviços Gerais e Manutenção)",
@@ -83,7 +84,7 @@ describe("Model Person", () => {
     expect(result).toMatchObject({
       suapId: 307838,
       name: "Aline Tomaz",
-      image: "/static/comum/img/default.jpg",
+      image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
       cpf: "01041626436",
       sector:
         "IFRN → RE → DG/IP → DIAC/IP → ETEP/IP (Equipe Técnico-Pedagógica do Campus Ipanguaçu)",
@@ -91,5 +92,27 @@ describe("Model Person", () => {
     });
   });
 
+  // Esta busca deve retornar um aluno
+  test("Aluno - A partir da busca de alunos", () => {
+    const aluno = {
+      id: 313838,
+      html: '<div class="person">             <div class="photo-circle">                 <img src="/media/alunos/75x100/313838.OjAU3vXkpsW0.jpeg" alt="Foto de Naciso Martins Xavier Filho (20221054010028)" />             </div>             <dl><dt class="sr-only">Nome</dt><dd><strong>Naciso Martins Xavier Filho (20221054010028)</strong></dd><dt class="sr-only">Curso</dt><dd>05401 - T\u00e9cnico de N\u00edvel M\u00e9dio em Inform\u00e1tica, na Forma Integrado (2012) - Campus Ipangua\u00e7u (CAMPUS IPANGUA\u00c7U)</dd><dt class="sr-only">Caracteriza\u00e7\u00e3o</dt><dd class="true">Realizou caracteriza\u00e7\u00e3o</dd><dt class="sr-only">Inscri\u00e7\u00e3o</dt><dd class="false">N\u00e3o inscrito em programa</dd></dl>         </div>',
+      text: "Naciso Martins Xavier Filho (20221054010028)",
+    };
+    const result = Person.fromAutocomplete(aluno, personType.ALUNO);
+
+    console.log(result);
+    expect(result).toBeInstanceOf(Person);
+
+    // expect(result).toMatchObject({
+    //   suapId: 367830,
+    //   name: "Ana Vitória Barbalho da Siva",
+    //   image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
+    //   matricula: 202110510650035,
+    //   course:
+    //     "051065 - ProiTEC - Programa de Iniciação Tecnológica e Cidadania (CAMPUS IPANGUAÇU)",
+    //   type: personType.ALUNO,
+    // });
+  });
   //*/
 });

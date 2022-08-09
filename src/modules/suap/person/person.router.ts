@@ -4,10 +4,12 @@ import PesrsonController from "./person.controller";
 
 const router = express.Router();
 
+router.get("/suap/people", [authMiddleware], PesrsonController.searchPeople);
+
 router.get(
-  "/suap/people/search",
+  "/suap/people/student",
   [authMiddleware],
-  PesrsonController.searchPeople
+  PesrsonController.searchStudent
 );
 
 export default router;
