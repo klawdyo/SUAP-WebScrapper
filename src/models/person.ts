@@ -1,5 +1,5 @@
 import { load } from "cheerio";
-import SUAP from "lib/suap";
+import SUAP from "../lib/suap";
 
 export default class Person {
   suapId: number = -1;
@@ -29,7 +29,10 @@ export default class Person {
    * de um autocomplete
    *
    */
-  static fromAutocomplete(person: autocompletePerson): Person | null {
+  static fromAutocomplete(
+    person: autocompletePerson,
+    defaultType: personType | undefined = undefined
+  ): Person | null {
     try {
       const result: Person = {
         suapId: person.id,
@@ -53,9 +56,13 @@ export default class Person {
 
       // Parse da chave text
       const nameRgx =
-        /(?<name>.*?) \((?<identification>.*?)\) \((?<type>.*?)\)/i;
+        /(?<name>.*?) \((?<identification>.*?)\)( \((?<type>.*?)\))?/i;
       const nameMatch = nameRgx.exec(person.text);
+
+      // Se não encontrou um nome, encerre
       if (!nameMatch) return null;
+
+      // Dados iniciais
       const {
         type = "",
         identification = "",
@@ -64,23 +71,39 @@ export default class Person {
 
       result.name = name;
 
+      // Se encontrou um tipo no resultado
       switch (type.substring(0, 5)) {
         case "Aluno":
-          result.matricula = +identification;
           result.type = personType.ALUNO;
           break;
         case "Servi":
-          result.matricula = +identification;
           result.type = personType.SERVIDOR;
           break;
         case "Prest":
-          result.cpf = identification;
           result.type = personType.TERCEIRIZADO;
           break;
       }
 
+      // Se não encontrou um tipo no resultado E possui um tipo padrão
+      if (!result.type && defaultType) result.type = defaultType;
+
+      // Se for aluno ou servidor, use matrícula
+      if (
+        [personType.ALUNO, personType.SERVIDOR].includes(
+          result.type as personType
+        )
+      ) {
+        result.matricula = +identification;
+      }
+      // Se encontrou um terceirizado, use o CPF
+      else if ([personType.TERCEIRIZADO].includes(result.type as personType)) {
+        result.cpf = identification;
+      }
+
       return new Person(result);
     } catch (error) {
+      console.log(error);
+
       return null;
     }
   }
