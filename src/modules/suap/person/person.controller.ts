@@ -1,25 +1,36 @@
 import { Request, Response } from "express";
-import SUAP from "lib/suap";
 import Campus from "models/campus";
-import Person, { autocompletePerson } from "models/person";
 import User from "models/user";
 import Year from "models/year";
 import authRepository from "../auth/auth.repository";
+import searchPerson from "./lib/searchPerson";
 import searchStudent, { personFilterOptions } from "./lib/searchStudent";
-import { controlSearchPeople, controlSearchStudent } from "./values/control";
 
 export default class PersonController {
   /**
    * Pesquisa pessoas do campus do usuário logado
    * Esta busca inclui alunos, servidores e prestadores de serviço
    *
-   * @param term Termo de busca
+   * URL: /suap/people
+   * Method: GET
+   * Query: {
+   *    term: string - texto para busca
+   * }
    */
   static async searchPeople(request: Request, response: Response) {
     try {
       const { term = "" } = request.query;
       const cookie = await authRepository.getCookie(request.user as User);
 
+      if (!cookie) throw null;
+
+      const list = await searchPerson(term.toString(), cookie);
+
+      response.success(list);
+    } catch (error) {
+      response.exception(error);
+    }
+  }
   /**
    * Pesquisa alunos
    * https://github.com/klawdyo/SUAP-WebScrapper/wiki#alunos-por-di%C3%A1rio
