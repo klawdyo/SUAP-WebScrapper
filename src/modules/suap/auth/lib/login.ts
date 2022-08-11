@@ -14,7 +14,7 @@ type tokenResponse = {
 
 type loginResponse = {
   user: User;
-  auth: tokenResponse;
+  token: tokenResponse;
 };
 
 export default async function login(
@@ -54,7 +54,7 @@ export default async function login(
 
     return {
       user,
-      auth: {
+      token: {
         access_token: token,
         token_type: "Bearer",
         expires_in: authRepository._tokenTimeout,
