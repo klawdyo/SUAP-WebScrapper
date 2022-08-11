@@ -6,7 +6,7 @@ import suapDiaryRouter from "modules/suap/diary/diary.router";
 import suapTravelRouter from "modules/suap/travel/travel.router";
 
 //
-import errorRouter from "modules/suap/error/error.router";
+import errorRouter from "modules/error/error.router";
 
 export default [
   //
