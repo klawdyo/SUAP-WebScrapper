@@ -1,6 +1,6 @@
 {
   "name": "tutorial-rest-api-nodejs-express-sqlite-typescript",
-  "version": "1.0.1",
+  "version": "1.8.0",
   "main": "./src/index.ts",
   "license": "MIT",
   "scripts": {
