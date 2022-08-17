@@ -37,4 +37,35 @@ export default class TravelController {
       response.exception(error);
     }
   }
+
+  /**
+   * Pega os dados de uma viagem
+   *
+   * URL: /suap/travels/:id
+   * Method: GET
+   *
+   * Params: {
+   *    id {integer} - Id da viagem no sistema de frota
+   * }
+   */
+  static async first(request: Request, response: Response) {
+    try {
+      const cookie = await authRepository.getCookie(request.user as User);
+      const { id } = request.params;
+      if (!cookie) throw {};
+
+      // const travelList = await getTravelById(cookie, +id);
+      const travelList = await searchTravelSchedules(cookie, id, false);
+
+      if (!travelList.length)
+        throw {
+          code: 404,
+          message: "Viagem não encontrada",
+        };
+
+      return response.success(travelList[0]);
+    } catch (error) {
+      response.exception(error);
+    }
+  }
 }
