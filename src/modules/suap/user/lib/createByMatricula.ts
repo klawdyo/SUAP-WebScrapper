@@ -2,6 +2,7 @@ import SUAP from "lib/suap";
 import User from "models/user";
 import authRepository from "modules/suap/auth/auth.repository";
 import profileParser from "modules/suap/auth/lib/profileParser";
+import searchPerson from "modules/suap/person/lib/searchPerson";
 import userRepository from "../user.repository";
 
 /**
@@ -23,19 +24,39 @@ export default async function createByMatricula(
       // Pega as configurações do cookie do usuário logado
       const cookie = await authRepository.getCookie(loggedUser);
 
-      // Define o cookie e pega o conteúdo da página do usuário
-      const profileContent = await SUAP
-        // Inclui o cookie
-        .setCookie(cookie)
-        // Realiza a requisição GET
-        .get(`/rh/servidor/${matriculaToSave}/`);
+      if (cookie) {
+        // Define o cookie e pega o conteúdo da página do usuário
+        const profileContent = await SUAP
+          // Inclui o cookie
+          .setCookie(cookie)
+          // Realiza a requisição GET
+          .get(`/rh/servidor/${matriculaToSave}/`);
 
-      // Processa o html recebido para mostrar somente as informações
-      // necessárias
-      const profile = profileParser(profileContent);
+        // Processa o html recebido para mostrar somente as informações
+        // necessárias
+        const profile = profileParser(profileContent);
 
-      // Salva o usuário pesquisado no banco
-      userToSave = await userRepository.save(profile);
+        // Pega a informação de id no suap
+        const personData = await searchPerson(
+          profile.matricula.toString(),
+          cookie
+        );
+
+        console.log("dados da busca", personData);
+        console.log("chegou aqui", profile.matricula);
+
+        if (personData.length) {
+          console.log("personData", personData[0]);
+          profile.suapId = personData[0].suapId;
+        }
+
+        // Salva o usuário pesquisado no banco
+        userToSave = await userRepository.save(profile);
+      } else
+        throw {
+          code: 403,
+          message: "Usuário não autenticado",
+        };
     }
 
     return userToSave;

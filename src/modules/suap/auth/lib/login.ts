@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 
 import SUAP from "lib/suap";
 import User from "models/user";
+import searchPerson from "modules/suap/person/lib/searchPerson";
 import userRepository from "modules/suap/user/user.repository";
 import authRepository from "../auth.repository";
 import profileParser from "./profileParser";
@@ -39,6 +40,17 @@ export default async function login(
 
       //
       const profile = profileParser(profileContent);
+
+      // Pega a informação de id no suap
+      const personData = await searchPerson(
+        profile.matricula.toString(),
+        cookie
+      );
+
+      if (personData.length) {
+        console.log("personData", personData[0]);
+        profile.suapId = personData[0].suapId;
+      }
 
       //
       user = await userRepository.save(profile);

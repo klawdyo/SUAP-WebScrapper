@@ -5,7 +5,7 @@ import { controlSearchPeople } from "../values/control";
 export default async function searchPerson(
   term: string,
   cookie: string | string[]
-) {
+): Promise<Person[]> {
   const result = await SUAP.setCookie(cookie)
     .addHeaders({
       "Content-Type": "application/x-www-form-urlencoded",
