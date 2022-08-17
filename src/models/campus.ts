@@ -36,6 +36,7 @@ export default class Campus {
     new Campus({ id: 43, short: "SPP", name: "São Paulo do Potengi" }),
     new Campus({ id: 14, short: "ZL", name: "Zona Leste" }),
     new Campus({ id: 2, short: "ZN", name: "Zona Norte" }),
+    new Campus({ id: 18, short: "RE", name: "Reitoria" }),
   ];
 
   /**

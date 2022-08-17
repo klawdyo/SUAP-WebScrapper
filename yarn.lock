@@ -2696,6 +2696,11 @@ keyv@^3.0.0:
   dependencies:
     json-buffer "3.0.0"
 
+klawtil@^0.14.1:
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/klawtil/-/klawtil-0.14.1.tgz#9a6c98e6205469a257024ba3445735d8eb10562d"
+  integrity sha512-ODC7601LOPdjiPDG1OkPSh6/fdxf31GDb6MfNFj91t7kTvdluwxp+y+ElcR1/lDRfok7uIBSarsudGgJfkWUXA==
+
 kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"

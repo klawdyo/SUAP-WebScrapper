@@ -1,30 +1,39 @@
+import Campus from "./campus";
+
 class User {
   id?: number;
   matricula: number = 0;
-  name: string = "";
+  cpf: string = "";
   email: string = "";
+  name: string = "";
+  shortName: string = "";
   image: string = "";
+  campus?: Campus;
 
   constructor(json: Record<string, any> | null) {
     if (!json) return;
 
     this.id = json.id;
     this.matricula = json.matricula ? +json.matricula : -1;
+    this.cpf = json.cpf;
     this.email = json.email;
     this.name = json.name;
+    this.shortName = json.shortName;
     this.image = json.image;
+    this.campus = Campus.get(json.campus);
   }
 
   toJSON() {
     return {
+      id: this.id,
+      matricula: this.matricula,
+      cpf: this.cpf || "",
       email: this.email || "",
       name: this.name || "",
+      shortName: this.shortName || "",
       image: this.image || "",
-      matricula: this.matricula,
-      id: this.id,
+      campus: this.campus?.short,
     };
-
-    // return result;
   }
 
   isEmpty() {
