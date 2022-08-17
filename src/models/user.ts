@@ -2,6 +2,7 @@ import Campus from "./campus";
 
 class User {
   id?: number;
+  suapId?: number | null;
   matricula: number = 0;
   cpf: string = "";
   email: string = "";
@@ -14,6 +15,7 @@ class User {
     if (!json) return;
 
     this.id = json.id;
+    this.suapId = json.suapId ? +json.suapId : null;
     this.matricula = json.matricula ? +json.matricula : -1;
     this.cpf = json.cpf;
     this.email = json.email;
@@ -26,6 +28,7 @@ class User {
   toJSON() {
     return {
       id: this.id,
+      suapId: this.suapId,
       matricula: this.matricula,
       cpf: this.cpf || "",
       email: this.email || "",
