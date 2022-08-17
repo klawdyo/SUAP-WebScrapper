@@ -1,19 +1,7 @@
-import SUAP from "lib/suap";
 import Travel from "models/travel";
 import { load } from "cheerio";
 
-export default async function searchDiaries(
-  cookie: string | string[]
-): Promise<Travel[]> {
-  const result = await SUAP.setCookie(cookie).get(
-    "/admin/frota/viagemagendamento/",
-    { tab: "tab_agendamentos_futuros" }
-  );
-
-  return parseTripsTable(result);
-}
-
-function parseTripsTable(html: string): Travel[] {
+export default function parseTripsTable(html: string): Travel[] {
   const $ = load(html);
 
   const parsed = $("tbody tr", html)
