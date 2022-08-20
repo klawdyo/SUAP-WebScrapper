@@ -217,7 +217,7 @@ class SUAP {
   static getHeaders(cookies?: string | string[] | undefined): Headers {
     let headers = {
       "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
       Cookie: "",
 
       Host: "suap.ifrn.edu.br",
