@@ -33,9 +33,9 @@ export default class DiaryController {
         semester: +semester,
       });
 
-      response.success(diaryList);
+      return response.success(diaryList);
     } catch (error) {
-      response.exception(error);
+      return response.exception(error);
     }
   }
 }

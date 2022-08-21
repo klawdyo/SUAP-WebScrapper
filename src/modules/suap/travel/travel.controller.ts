@@ -24,7 +24,7 @@ export default class TravelController {
       const cookie = await authRepository.getCookie(request.user as User);
       const { term, only_future = true } = request.query;
 
-      if (!cookie) throw {};
+      if (!cookie) throw { code: 401, message: "Não autenticado" };
 
       const travelList = await searchTravelSchedules(
         cookie,
@@ -32,9 +32,9 @@ export default class TravelController {
         toBoolean(only_future)
       );
 
-      response.success(travelList);
+      return response.success(travelList);
     } catch (error) {
-      response.exception(error);
+      return response.exception(error);
     }
   }
 

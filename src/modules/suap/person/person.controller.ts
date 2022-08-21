@@ -26,9 +26,9 @@ export default class PersonController {
 
       const list = await searchPerson(term.toString(), cookie);
 
-      response.success(list);
+      return response.success(list);
     } catch (error) {
-      response.exception(error);
+      return response.exception(error);
     }
   }
   /**
@@ -79,11 +79,11 @@ export default class PersonController {
       const result = await searchStudent(term.toString(), cookie, options);
 
       //
-      response.success(result);
+      return response.success(result);
     } catch (error) {
       console.log(error);
 
-      response.exception(error);
+      return response.exception(error);
     }
   }
 }

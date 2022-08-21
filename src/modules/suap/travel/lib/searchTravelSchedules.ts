@@ -22,20 +22,25 @@ export default async function searchTravelSchedules(
   term: string = "",
   onlyFuture: boolean = true
 ): Promise<Travel[]> {
-  //
-  const url = "/admin/frota/viagemagendamento/";
+  try {
+    //
+    const url = "/admin/frota/viagemagendamento/";
 
-  // Define a quesystring
-  const query: queryString = {};
+    // Define a quesystring
+    const query: queryString = {};
 
-  // Se for somente os futuros
-  if (onlyFuture) query.tab = "tab_agendamentos_futuros";
-  // Se houver pesquisa
-  if (term) query.q = term;
+    // Se for somente os futuros
+    if (onlyFuture) query.tab = "tab_agendamentos_futuros";
+    // Se houver pesquisa
+    if (term) query.q = term;
 
-  // Recebe os resultados
-  const result = await SUAP.setCookie(cookie).get(url, query);
+    // Recebe os resultados
+    const result = await SUAP.setCookie(cookie).get(url, query);
 
-  //
-  return parseTripsTable(result);
+    //
+    return parseTripsTable(result);
+  } catch (error) {
+    console.log("Catch - searchTravelSchedules", error);
+    throw error;
+  }
 }
