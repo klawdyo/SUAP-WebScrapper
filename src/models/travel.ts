@@ -35,11 +35,22 @@ export default class Travel {
     // ou estará com um botão de "Avaliar". Este botão não é exibido para todos então
     // irei amarrar somente o "Deferido" e o "Indeferido" como true e false respectivamente
     // Outros casos serão null e representarão o status "Aguardando"
-    if (item.isDeferred && item.isDeferred === "Deferido")
+    if (item.isDeferred && item.isDeferred === "Deferido") {
       this.isDeferred = true;
-    else if (item.isDeferred && item.isDeferred === "Indeferido")
+    }
+    //
+    // Se for indeferido ou fora do prazo retorne false
+    //
+    else if (
+      item.isDeferred &&
+      ["Indeferido", "Fora do Prazo", "Não Autorizado"].includes(
+        item.isDeferred
+      )
+    ) {
       this.isDeferred = false;
-    else this.isDeferred = null;
+    } else {
+      this.isDeferred = null;
+    }
   }
 
   static toList(list: Record<string, string>[]): Travel[] {
