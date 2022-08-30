@@ -65,7 +65,8 @@ async function authMiddleware(
       message: "Usuário não autenticado",
     };
   } catch (error) {
-    return Output.exception(error);
+    const out = new Output(response);
+    return out.exception(error);
   }
 }
 

@@ -34,6 +34,8 @@ export default class TravelController {
 
       return response.success(travelList);
     } catch (error) {
+      console.log("TravelController.search()", error);
+
       return response.exception(error);
     }
   }
@@ -65,6 +67,8 @@ export default class TravelController {
 
       return response.success(travelList[0]);
     } catch (error) {
+      console.log("TravelController.first()", error);
+
       response.exception(error);
     }
   }

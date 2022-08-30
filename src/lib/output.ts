@@ -7,7 +7,7 @@ export default class Output {
   /**
    *
    */
-  static _response: Response | null = null;
+  _response: Response | null = null;
 
   /**
    * Inclui o objeto de resposta nas propriedades da classe
@@ -15,7 +15,7 @@ export default class Output {
    * @param response
    * @returns
    */
-  static response(response: Response) {
+  constructor(response: Response) {
     this._response = response;
     return this;
   }
@@ -27,7 +27,7 @@ export default class Output {
    * @param message
    * @returns
    */
-  static success(
+  success(
     data: any,
     message: string | null = "Transação realizada com sucesso"
   ) {
@@ -47,7 +47,7 @@ export default class Output {
    * @param message
    * @returns
    */
-  static error(
+  error(
     status: number = 500,
     data: any = null,
     message: string | null = "Erro ao realizar a operação"
@@ -71,8 +71,8 @@ export default class Output {
    * @param message
    * @returns
    */
-  static notFound = (data: any, message: string | null) =>
-    Output.error(404, data, message || "Página não encontrada");
+  notFound = (data: any, message: string | null) =>
+    this.error(404, data, message || "Página não encontrada");
 
   /**
    * Requisição proibida
@@ -81,8 +81,8 @@ export default class Output {
    * @param message
    * @returns
    */
-  static forbidden = (data: any, message: string | null) =>
-    Output.error(403, data, message || "Requisição não permitida");
+  forbidden = (data: any, message: string | null) =>
+    this.error(403, data, message || "Requisição não permitida");
 
   /**
    * Requisição mal formada
@@ -91,8 +91,8 @@ export default class Output {
    * @param message
    * @returns
    */
-  static badRequest = (data: any, message: string | null) =>
-    Output.error(400, data, message || "Esta requisição está mal formatada");
+  badRequest = (data: any, message: string | null) =>
+    this.error(400, data, message || "Esta requisição está mal formatada");
 
   /**
    * Requisição não autorizada
@@ -101,8 +101,8 @@ export default class Output {
    * @param message
    * @returns
    */
-  static unauthorized = (data: any, message: string | null) =>
-    Output.error(401, data, message || "Acesso não autorizado");
+  unauthorized = (data: any, message: string | null) =>
+    this.error(401, data, message || "Acesso não autorizado");
 
   /**
    * Trata uma exceção recebida e retorna uma mensagem padronizada
@@ -111,7 +111,7 @@ export default class Output {
    * @param message Mensagem a ser exibida
    * @returns Response
    */
-  static exception(e: any, message: string | null = null) {
+  exception(e: any, message: string | null = null) {
     try {
       // Código padrão das exceções
       const code = 500;
@@ -123,7 +123,7 @@ export default class Output {
       // for example, a unique constraint violation.
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         //
-        return Output.error(code, null, message || e.message);
+        return this.error(code, null, message || e.message);
       }
 
       //
@@ -132,8 +132,8 @@ export default class Output {
       // query engine returns an error related to a request that does not have an error code.
       else if (e instanceof Prisma.PrismaClientUnknownRequestError) {
         //
-        // return Output.error(code, null, message || e.message);
-        return Output.error(
+        // return this.error(code, null, message || e.message);
+        return this.error(
           code,
           null,
           message || "Erro desconhecido no acesso ao banco de dados"
@@ -147,7 +147,7 @@ export default class Output {
       // Client or the whole Node process must be restarted.
       else if (e instanceof Prisma.PrismaClientRustPanicError) {
         //
-        return Output.error(
+        return this.error(
           code,
           null,
           message || "Erro no mecanismo de acesso ao banco de dados"
@@ -161,7 +161,7 @@ export default class Output {
       // to the database is created. This happens either:
       else if (e instanceof Prisma.PrismaClientInitializationError) {
         //
-        return Output.error(
+        return this.error(
           code,
           null,
           message || "Erro de conexão ao banco de dados"
@@ -176,7 +176,7 @@ export default class Output {
       // to "Hello, I like cheese and gold!")
       else if (e instanceof Prisma.PrismaClientValidationError) {
         //
-        return Output.error(
+        return this.error(
           code,
           null,
           message || "Erro de validação nos campos do banco de dados"
@@ -194,7 +194,7 @@ export default class Output {
           "jwt expired": "Token de autenticação expirado", // token expirado
         };
 
-        return Output.error(
+        return this.error(
           401,
           null,
           message || messages[e.message] || "Token de autenticação inválido"
@@ -206,7 +206,7 @@ export default class Output {
       //
       //
       else if (e instanceof Joi.ValidationError) {
-        return Output.error(400, e.details, message || "Erro de validação");
+        return this.error(400, e.details, message || "Erro de validação");
       }
 
       //
@@ -214,14 +214,14 @@ export default class Output {
       //
       //
       else if (e instanceof SyntaxError) {
-        return Output.error(500, { name: e.name, message: e.message });
+        return this.error(500, { name: e.name, message: e.message });
       }
 
       //
       //
       //
       else if (typeof e.code === "string") {
-        return Output.error(500, null, "Erro desconhecido");
+        return this.error(500, null, "Erro desconhecido");
       }
 
       //
@@ -230,7 +230,7 @@ export default class Output {
       //
       //
       else {
-        return Output.error(e.code, null, e.message);
+        return this.error(e.code, null, e.message);
       }
     } catch (error) {
       console.log("Catch - Output.exception", error);
@@ -247,28 +247,28 @@ export default class Output {
    * @param next
    */
   static middleware(request: Request, response: Response, next: NextFunction) {
-    Output.response(response);
+    const out = new Output(response);
 
     response.success = (data: any, message: string | null) =>
-      Output.success(data, message);
+      out.success(data, message);
 
     response.error = (status: number, data: any, message: string | null) =>
-      Output.error(status, data, message);
+      out.error(status, data, message);
 
     response.exception = (e: any, message: string | null) =>
-      Output.exception(e, message);
+      out.exception(e, message);
 
     response.notFound = (data: any, message: string | null) =>
-      Output.notFound(data, message);
+      out.notFound(data, message);
 
     response.forbidden = (data: any, message: string | null) =>
-      Output.forbidden(data, message);
+      out.forbidden(data, message);
 
     response.badRequest = (data: any, message: string | null) =>
-      Output.badRequest(data, message);
+      out.badRequest(data, message);
 
     response.unauthorized = (data: any, message: string | null) =>
-      Output.unauthorized(data, message);
+      out.unauthorized(data, message);
 
     next();
   }
