@@ -31,6 +31,7 @@ export default async function searchTravelSchedules(
 
     // Se for somente os futuros
     if (onlyFuture) query.tab = "tab_agendamentos_futuros";
+    else query.tab = "tab_any_data";
     // Se houver pesquisa
     if (term) query.q = term;
 
