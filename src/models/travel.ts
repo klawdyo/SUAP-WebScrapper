@@ -6,8 +6,8 @@ export default class Travel {
   leavesAt: Date | string;
   arrivesAt: Date | string;
   objective: string = "";
-  isAuthorized: boolean = false;
-  isDeferred: boolean = false;
+  isAuthorized: boolean | null = null;
+  isDeferred: boolean | null = null;
 
   constructor(item: Record<string, any>) {
     this.suapId = +item.suapId;
@@ -19,54 +19,32 @@ export default class Travel {
       .utcOffset(-3, true)
       .toISOString(true);
     if (item.objective) this.objective = item.objective;
-    if (item.isAuthorized) this.isAuthorized = item.isAuthorized === "Sim";
-    if (item.isDeferred) this.isDeferred = item.isDeferred === "Deferido";
+
+    // Os estados de autorização da chefia:
+    // Pode ser "sim", "aguardando" ou "fora do prazo". Podem existir outros
+    // estados não localizados na listagem. Neste caso, só amarrei o
+    // "sim" e o "aguardando". Outros estados serão false
+    if (item.isAuthorized && item.isAuthorized === "Sim")
+      this.isAuthorized = true;
+    else if (item.isAuthorized && item.isAuthorized === "Aguardando")
+      this.isAuthorized = null;
+    else this.isAuthorized = false;
+
+    // Estados de deferimento pela cosgem
+    // Podem ser "Deferido" e "Indeferido". Se não for um desses, ou estará vazio
+    // ou estará com um botão de "Avaliar". Este botão não é exibido para todos então
+    // irei amarrar somente o "Deferido" e o "Indeferido" como true e false respectivamente
+    // Outros casos serão null e representarão o status "Aguardando"
+    if (item.isDeferred && item.isDeferred === "Deferido")
+      this.isDeferred = true;
+    else if (item.isDeferred && item.isDeferred === "Indeferido")
+      this.isDeferred = false;
+    else this.isDeferred = null;
   }
 
   static toList(list: Record<string, string>[]): Travel[] {
     return list.map((item) => new Travel(item));
-
-    return [];
   }
-
-  /**
-   * Cria um objeto person a partir de um item retornado por um html
-   * de um autocomplete
-   *
-   */
-  // static parser(html:string): Travel[] {
-  //   try {
-  //     const result: Travel = {
-  //       suapId: diary.id,
-  //       code: "",
-  //       name: "",
-  //     };
-
-  //     const $ = load(diary.text);
-
-  //     // Regex: https://regexr.com/6rcqt
-  //     const match =
-  //       /(?<id>\d+)\s*-\s*(?<code>\w+\.\d+)\s*-\s*(?<name>.*?)\s*-\s*(?<level>M.dio|Gradua..o)\s*\[(?<workload>\d+)\sh\/(?<classes>\d+)\sAulas\]/i.exec(
-  //         diary.text
-  //       );
-
-  //     if (match?.groups) {
-  //       const { id, code, name, level, workload, classes } = match?.groups;
-  //       return new Travel({
-  //         suapId: id,
-  //         code,
-  //         name,
-  //         workload: +workload,
-  //         classes: +classes,
-  //         level,
-  //       });
-  //     } else {
-  //       return null;
-  //     }
-  //   } catch (error) {
-  //     return null;
-  //   }
-  // }
 }
 
 /**
