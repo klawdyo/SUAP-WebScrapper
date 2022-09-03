@@ -12,15 +12,19 @@ datasource db {
 
 // Usuário do SUAP
 model User {
-  id        Int      @id @default(autoincrement())
-  suapId    Int? // id da pessoa do suap
-  matricula Int      @unique
-  email     String   @unique
-  name      String
-  cpf       String?
-  image     String
-  shortName String? // Nome Usual do SUAP
-  campus    String? // Sigla do campus
+  id         Int     @id @default(autoincrement())
+  suapId     Int? // id da pessoa do suap
+  matricula  Int     @unique
+  email      String  @unique
+  name       String
+  cpf        String?
+  image      String
+  shortName  String? // Nome Usual do SUAP
+  campus     String? // Sigla do campus
+  type       String? // Tipo do usuário: terceirizado, aluno, servidor
+  sector     String? // Setor ao qual é ligado.
+  occupation String? // Cargo que ocupa
+
   // Relacionamento que contém a lista de tokens
   tokens    Token[]
   // Data/hora de criação e atualização

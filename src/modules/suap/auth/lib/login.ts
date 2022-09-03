@@ -47,10 +47,16 @@ export default async function login(
         cookie
       );
 
+      // Se encontrou os dados
       if (personData.length) {
-        console.log("personData", personData[0]);
         profile.suapId = personData[0].suapId;
+        profile.type = personData[0].type;
+        profile.sector = personData[0].sector;
+        profile.occupation = personData[0].occupation;
       }
+
+      console.log("person data", personData);
+      console.log("profile", profile);
 
       //
       user = await userRepository.save(profile);

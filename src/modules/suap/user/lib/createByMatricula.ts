@@ -42,12 +42,11 @@ export default async function createByMatricula(
           cookie
         );
 
-        console.log("dados da busca", personData);
-        console.log("chegou aqui", profile.matricula);
-
         if (personData.length) {
-          console.log("personData", personData[0]);
           profile.suapId = personData[0].suapId;
+          profile.type = personData[0].type;
+          profile.sector = personData[0].sector;
+          profile.occupation = personData[0].occupation;
         }
 
         // Salva o usuário pesquisado no banco

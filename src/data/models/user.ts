@@ -12,6 +12,8 @@ class User {
   image: string = "";
   campus?: Campus;
   type?: personType;
+  sector?: string;
+  occupation?: string;
 
   constructor(json: Record<string, any> | null) {
     if (!json) return;
@@ -25,6 +27,9 @@ class User {
     this.shortName = json.shortName;
     this.image = json.image;
     this.campus = Campus.get(json.campus);
+    this.type = json.type;
+    this.sector = json.sector;
+    this.occupation = json.occupation;
   }
 
   toJSON() {
@@ -38,6 +43,9 @@ class User {
       shortName: this.shortName || "",
       image: this.image || "",
       campus: this.campus?.short,
+      type: this.type || "",
+      sector: this.sector || "",
+      occupation: this.occupation || "",
     };
   }
 
