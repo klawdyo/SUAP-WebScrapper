@@ -68,7 +68,7 @@ export default class UserController {
 
       return response.success(userToSave);
     } catch (error: Error | any) {
-      console.log("Erro no createbymaricula", error);
+      console.log("Catch UserController.createByMatricula", error);
 
       return response.exception(error);
     }

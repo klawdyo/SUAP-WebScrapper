@@ -1,1 +1,1 @@
-export type parsedToken = { matricula: number; iat: number; exp: number };
+export type parsedToken = { matricula: string; iat: number; exp: number };

@@ -83,7 +83,7 @@ export default {
    */
   first: async (
     tokenId: number | null,
-    matricula: number | undefined
+    matricula: string | undefined
   ): Promise<Token | null> => {
     if (!tokenId && !matricula)
       throw { code: 500, message: "ID ou Matrícula precisam ser informados" };

@@ -6,7 +6,7 @@ import User from "data/models/user";
 import searchPerson from "modules/suap/person/lib/searchPerson";
 import userRepository from "modules/suap/user/user.repository";
 import authRepository from "../auth.repository";
-import profileParser from "./profileParser";
+import employeeProfileParser from "../../user/lib/employeeProfileParser";
 import { loginResponse } from "data/types/authResponse";
 import Constants from "data/constants/contants";
 
@@ -19,12 +19,12 @@ import Constants from "data/constants/contants";
  * @returns
  */
 export default async function login(
-  matricula: number,
+  matricula: string,
   password: string
 ): Promise<loginResponse> {
   try {
     // Efetua o login no suap e pega o cookie
-    const cookie = await SUAP.getCookie(matricula.toString(), password);
+    const cookie = await SUAP.getCookie(matricula, password);
 
     // Pesquisa se o usuário já está cadastrado no banco de dados
     let user = await userRepository.first(matricula);
@@ -39,13 +39,10 @@ export default async function login(
         .get(`/rh/servidor/${matricula}/`);
 
       //
-      const profile = profileParser(profileContent);
+      const profile = employeeProfileParser(profileContent);
 
       // Pega a informação de id no suap
-      const personData = await searchPerson(
-        profile.matricula.toString(),
-        cookie
-      );
+      const personData = await searchPerson(profile.matricula, cookie);
 
       // Se encontrou os dados
       if (personData.length) {

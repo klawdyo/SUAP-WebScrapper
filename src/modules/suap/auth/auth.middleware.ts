@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import Output from "lib/output";
 
@@ -64,6 +64,8 @@ async function authMiddleware(
       message: "Usuário não autenticado",
     };
   } catch (error) {
+    console.log("Catch authMiddleware", error);
+
     const out = new Output(response);
     return out.exception(error);
   }

@@ -7,7 +7,7 @@ export default class Person {
   suapId: number = -1;
   name: string = "";
   image: string = "";
-  matricula?: number;
+  matricula?: string;
   cpf?: string;
   sector?: string;
   course?: string;
@@ -18,12 +18,29 @@ export default class Person {
     if (item.suapId) this.suapId = +item.suapId;
     if (item.name) this.name = item.name;
     if (item.image) this.image = item.image;
-    if (item.matricula) this.matricula = +item.matricula;
+    if (item.matricula) this.matricula = item.matricula;
     if (item.cpf) this.cpf = item.cpf;
     if (item.sector) this.sector = item.sector;
     if (item.course) this.course = item.course;
     if (item.occupation) this.occupation = item.occupation;
     if (item.type) this.type = item.type;
+  }
+
+  /**
+   * Converte para json
+   */
+  toJSON(): Record<string, any> {
+    return {
+      suapId: this.suapId || null,
+      name: this.name || null,
+      image: this.image || null,
+      matricula: this.matricula || null,
+      cpf: this.cpf || null,
+      sector: this.sector || null,
+      course: this.course || null,
+      occupation: this.occupation || null,
+      type: this.type || null,
+    };
   }
 
   /**
@@ -36,11 +53,11 @@ export default class Person {
     defaultType: personType | undefined = undefined
   ): Person | null {
     try {
-      const result: Person = {
+      const result: Person = new Person({
         suapId: person.id,
         name: "",
         image: "",
-      };
+      });
 
       const $ = load(person.html);
 
@@ -95,7 +112,7 @@ export default class Person {
           result.type as personType
         )
       ) {
-        result.matricula = +identification;
+        result.matricula = identification;
       }
       // Se encontrou um terceirizado, use o CPF
       else if ([personType.TERCEIRIZADO].includes(result.type as personType)) {

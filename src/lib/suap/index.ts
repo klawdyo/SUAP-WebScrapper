@@ -70,7 +70,7 @@ class SUAP {
   /**
    * Retorna os cookies
    */
-  static async getCookie(matricula: String, password: String): Promise<string> {
+  static async getCookie(matricula: string, password: string): Promise<string> {
     try {
       // Requisita a página inicial
       const result = await gotScraping.get(

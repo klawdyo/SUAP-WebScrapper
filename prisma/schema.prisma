@@ -14,7 +14,7 @@ datasource db {
 model User {
   id         Int     @id @default(autoincrement())
   suapId     Int? // id da pessoa do suap
-  matricula  Int     @unique
+  matricula  String  @unique
   email      String  @unique
   name       String
   cpf        String?
