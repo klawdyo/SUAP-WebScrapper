@@ -4,31 +4,35 @@ import messages from "./messages";
 import { ValidatorSchema, ValidatorData } from "./types";
 
 export default class Validator {
-  static _schema?: ValidatorSchema;
-  static data?: ValidatorData;
+  _schema?: ValidatorSchema;
+  _data?: ValidatorData;
 
-  static setSchema(schema: ValidatorSchema) {
-    this._schema = schema;
+  constructor(schema: Joi.PartialSchemaMap) {
+    this.setSchema(schema);
     return this;
   }
 
-  static setData(data: ValidatorData) {
-    this.data = data;
-    return this;
+  static schema(fn: Function) {
+    const schema = fn(Joi);
+
+    const obj = new Validator(schema);
+
+    return (request: Request, response: Response, next: NextFunction) =>
+      obj.middleware(request, response, next);
   }
 
-  static async isValid() {
+  async isValid() {
     try {
-      await this._schema?.validateAsync(this.data);
+      await this._schema?.validateAsync(this._data);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  static async validate() {
+  async validate() {
     try {
-      return await this._schema?.validateAsync(this.data, {
+      return await this._schema?.validateAsync(this._data, {
         abortEarly: false,
       });
     } catch (error) {
@@ -36,25 +40,7 @@ export default class Validator {
     }
   }
 
-  // static _schema?: ValidatorSchema;
-
-  // constructor(schema: ValidatorSchema) {
-  //   this._schema = schema;
-  // }
-
-  static meupau(schema: Joi.PartialSchemaMap) {
-    Joi.preferences({
-      messages: {
-        "number.required": "preeencha",
-        number: "recea",
-        "number.base": "recebaa",
-      },
-    });
-
-    return Joi.object(schema);
-  }
-
-  static schema(schema: Joi.PartialSchemaMap) {
+  setSchema(schema: Joi.PartialSchemaMap) {
     this._schema = Joi
       // Inclui o objeto do esquema
       .object(schema)
@@ -65,22 +51,16 @@ export default class Validator {
     return this;
   }
 
-  static async middleware(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) {
+  async middleware(request: Request, response: Response, next: NextFunction) {
     try {
-      Validator.setData(request.body);
+      this._data = request.body;
 
+      //
       if (!this._schema)
         throw { code: 500, message: "Esquema de validação não definido" };
 
-      Validator.setSchema(this._schema);
-
-      const body = await Validator.validate();
+      const body = await this.validate();
       request.body = body;
-
       return next();
     } catch (error) {
       console.log("erro no middleware", error);

@@ -1,4 +1,4 @@
-import Travel from "models/travel";
+import Travel from "data/models/travel";
 import { load } from "cheerio";
 
 export default function parseTripsTable(html: string): Travel[] {

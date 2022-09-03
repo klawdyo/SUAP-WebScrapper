@@ -1,4 +1,5 @@
 import { load } from "cheerio";
+import { autocompleteDiary } from "data/types/autocompleteDiary";
 
 export default class Diary {
   suapId: number;
@@ -56,12 +57,3 @@ export default class Diary {
     }
   }
 }
-
-/**
- * Tipo de dados para informações recebidas via autocomplete
- */
-export type autocompleteDiary = {
-  id: number;
-  html: string;
-  text: string;
-};

@@ -1,14 +1,7 @@
 import SUAP from "lib/suap";
-import Travel from "models/travel";
+import Travel from "data/models/travel";
 import parseTripsTable from "./parseTripsTable";
-
-/**
- * Tipo de dados para a querystring
- */
-type queryString = {
-  tab?: string;
-  q?: string;
-};
+import { searchTravelQueryString } from "data/types/searchTravelQueryString";
 
 /**
  * Pesquisa viagens agendadas no SUAP
@@ -27,7 +20,7 @@ export default async function searchTravelSchedules(
     const url = "/admin/frota/viagemagendamento/";
 
     // Define a quesystring
-    const query: queryString = {};
+    const query: searchTravelQueryString = {};
 
     // Se for somente os futuros
     if (onlyFuture) query.tab = "tab_agendamentos_futuros";

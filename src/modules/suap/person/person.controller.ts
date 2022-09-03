@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Campus from "models/campus";
-import User from "models/user";
-import Year from "models/year";
+import Campus from "data/models/campus";
+import User from "data/models/user";
+import Year from "data/models/year";
 import authRepository from "../auth/auth.repository";
 import searchPerson from "./lib/searchPerson";
 import searchStudent, { personFilterOptions } from "./lib/searchStudent";

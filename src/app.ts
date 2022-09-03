@@ -14,7 +14,7 @@ import helmet from "helmet";
 
 import router from "./routes";
 import Output from "lib/output";
-import User from "models/user";
+import User from "data/models/user";
 
 // Inclui o valor de usuário logado na interface do request
 declare global {

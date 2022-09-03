@@ -1,6 +1,6 @@
 import { Got, gotScraping, Headers } from "got-scraping";
 import cheerio from "cheerio";
-import User from "models/user";
+import User from "data/models/user";
 import { cookieParser, getCSRFMmiddlewareToken } from "./utils";
 import { URLSearchParams } from "url";
 
@@ -70,7 +70,7 @@ class SUAP {
   /**
    * Retorna os cookies
    */
-  static async getCookie(matricula: String, password: String): Promise<string> {
+  static async getCookie(matricula: string, password: string): Promise<string> {
     try {
       // Requisita a página inicial
       const result = await gotScraping.get(

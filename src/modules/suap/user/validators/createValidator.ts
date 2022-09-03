@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
 import Validator from "lib/validator";
 
-async function loginValidator(
+async function createValidator(
   request: Request,
   response: Response,
   next: NextFunction
@@ -11,8 +11,11 @@ async function loginValidator(
   // Schema de validação
   //
   Validator.schema({
-    matricula: Joi.number().required(),
-    password: Joi.string().min(8).required().label("Senha"),
+    matricula: Joi.string().required(),
+    email: Joi.string().email().required(),
+    name: Joi.string().required(),
+    image: Joi.string().required(),
+    cpf: Joi.string().required(),
   })
 
     //
@@ -22,4 +25,4 @@ async function loginValidator(
   // return Validator.schema().middleware(request, response, next);
 }
 
-export default loginValidator;
+export default createValidator;

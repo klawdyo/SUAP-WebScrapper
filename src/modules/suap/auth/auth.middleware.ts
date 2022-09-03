@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import Output from "lib/output";
 
 import userRepository from "../user/user.repository";
 import authRepository from "../auth/auth.repository";
-
-type parsedToken = { matricula: number; iat: number; exp: number };
+import { parsedToken } from "data/types/parsedToken";
 
 /**
  * authMiddleware
@@ -35,13 +34,13 @@ async function authMiddleware(
         message: "Token não informado",
       };
 
-    const parsedToken = jwt.verify(
+    const _parsedToken = jwt.verify(
       token,
       process.env.APP_KEY || ""
     ) as parsedToken;
 
     // Se existir token
-    const savedToken = await authRepository.first(null, parsedToken.matricula);
+    const savedToken = await authRepository.first(null, _parsedToken.matricula);
 
     // Se não tem token salvo no banco de dados
     if (!savedToken)
@@ -51,9 +50,9 @@ async function authMiddleware(
       };
 
     //
-    const user = await userRepository.first(parsedToken.matricula);
+    const user = await userRepository.first(_parsedToken.matricula);
 
-    if (parsedToken) {
+    if (_parsedToken) {
       request.user = user;
       return next();
     }
@@ -65,6 +64,8 @@ async function authMiddleware(
       message: "Usuário não autenticado",
     };
   } catch (error) {
+    console.log("Catch authMiddleware", error);
+
     const out = new Output(response);
     return out.exception(error);
   }
