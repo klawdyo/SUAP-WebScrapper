@@ -1,6 +1,7 @@
 import SUAP from "lib/suap";
-import Person, { autocompletePerson } from "models/person";
+import Person from "data/models/person";
 import { controlSearchPeople } from "../values/control";
+import { autocompletePerson } from "data/types/autocompletePerson";
 
 export default async function searchPerson(
   term: string,

@@ -1,7 +1,3 @@
-// export enum Campus {
-//   IP = 6,
-// }
-
 export default class Campus {
   id: number;
   short: string;

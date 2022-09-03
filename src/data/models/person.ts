@@ -1,5 +1,7 @@
 import { load } from "cheerio";
-import SUAP from "../lib/suap";
+import { autocompletePerson } from "data/types/autocompletePerson";
+import { personType } from "data/enums/personType";
+import SUAP from "../../lib/suap";
 
 export default class Person {
   suapId: number = -1;
@@ -107,19 +109,4 @@ export default class Person {
       return null;
     }
   }
-}
-
-/**
- * Tipo de dados para informações recebidas via autocomplete
- */
-export type autocompletePerson = {
-  id: number;
-  html: string;
-  text: string;
-};
-
-export enum personType {
-  ALUNO = "student",
-  SERVIDOR = "government_employee",
-  TERCEIRIZADO = "outsourced",
 }

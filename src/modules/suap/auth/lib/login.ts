@@ -1,29 +1,29 @@
 import jwt from "jsonwebtoken";
 
 import SUAP from "lib/suap";
-import User from "models/user";
+import Campus from "data/models/campus";
+import User from "data/models/user";
 import searchPerson from "modules/suap/person/lib/searchPerson";
 import userRepository from "modules/suap/user/user.repository";
 import authRepository from "../auth.repository";
 import profileParser from "./profileParser";
+import { loginResponse } from "data/types/authResponse";
+import Constants from "data/constants/contants";
 
-type tokenResponse = {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-};
-
-type loginResponse = {
-  user: User;
-  token: tokenResponse;
-};
-
+/**
+ * Efetua o login no SUAP, verifica se o usuário está apto a efetuar login e
+ * retorna os dados do usuário e o token de autenticação, caso esteja.
+ *
+ * @param matricula
+ * @param password
+ * @returns
+ */
 export default async function login(
   matricula: number,
   password: string
 ): Promise<loginResponse> {
   try {
-    // Pega o cookie após login
+    // Efetua o login no suap e pega o cookie
     const cookie = await SUAP.getCookie(matricula.toString(), password);
 
     // Pesquisa se o usuário já está cadastrado no banco de dados

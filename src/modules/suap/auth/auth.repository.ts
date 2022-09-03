@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import Token from "models/token";
-import User from "models/user";
+import Token from "data/models/token";
+import User from "data/models/user";
 import userRepository from "../user/user.repository";
 
 const prisma = new PrismaClient();

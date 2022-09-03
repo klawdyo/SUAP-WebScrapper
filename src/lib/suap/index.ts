@@ -1,6 +1,6 @@
 import { Got, gotScraping, Headers } from "got-scraping";
 import cheerio from "cheerio";
-import User from "models/user";
+import User from "data/models/user";
 import { cookieParser, getCSRFMmiddlewareToken } from "./utils";
 import { URLSearchParams } from "url";
 

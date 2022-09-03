@@ -1,5 +1,5 @@
 import SUAP from "lib/suap";
-import User from "models/user";
+import User from "data/models/user";
 import authRepository from "modules/suap/auth/auth.repository";
 import profileParser from "modules/suap/auth/lib/profileParser";
 import searchPerson from "modules/suap/person/lib/searchPerson";

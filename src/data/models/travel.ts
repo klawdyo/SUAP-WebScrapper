@@ -57,12 +57,3 @@ export default class Travel {
     return list.map((item) => new Travel(item));
   }
 }
-
-/**
- * Tipo de dados para informações recebidas via autocomplete
- */
-export type autocompleteTravel = {
-  id: number;
-  html: string;
-  text: string;
-};

@@ -1,6 +1,6 @@
 import { load } from "cheerio";
 import SUAP from "lib/suap";
-import User from "models/user";
+import User from "data/models/user";
 
 export default function profileParser(content: string): User {
   const $ = load(content);

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { toBoolean } from "klawtil";
 
-import User from "models/user";
+import User from "data/models/user";
 
 import authRepository from "../auth/auth.repository";
 import searchTravelSchedules from "./lib/searchTravelSchedules";

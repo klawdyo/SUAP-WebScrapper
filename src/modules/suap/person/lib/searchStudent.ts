@@ -2,10 +2,12 @@
 // https://suap.ifrn.edu.br/edu/enviar_mensagem/
 
 import SUAP from "lib/suap";
-import Campus from "models/campus";
-import Person, { autocompletePerson, personType } from "models/person";
-import Year from "models/year";
+import Campus from "data/models/campus";
+import Person from "data/models/person";
+import Year from "data/models/year";
 import { controlSearchStudent } from "../values/control";
+import { autocompletePerson } from "data/types/autocompletePerson";
+import { personType } from "data/enums/personType";
 
 export type personFilterOptions = {
   year: Year | undefined;

@@ -1,3 +1,4 @@
+import { personType } from "data/enums/personType";
 import Campus from "./campus";
 
 class User {
@@ -10,6 +11,7 @@ class User {
   shortName: string = "";
   image: string = "";
   campus?: Campus;
+  type?: personType;
 
   constructor(json: Record<string, any> | null) {
     if (!json) return;
