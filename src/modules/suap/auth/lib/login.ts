@@ -56,6 +56,14 @@ export default async function login(
       user = await userRepository.save(profile);
     }
 
+    // Se o usuário logado não tiver permissão para fazê-lo, encerre
+    // a tentativa de login.
+    if (!isAuthAllowed(user))
+      throw {
+        code: 401,
+        message: "Autenticação registra a servidores do campus Ipanguaçu",
+      };
+
     // Crio/Atualizo o token salvo no banco
     await authRepository.save(cookie, user);
 
@@ -75,4 +83,25 @@ export default async function login(
   } catch (error) {
     throw error;
   }
+}
+
+/**
+ * Define as restrições para login
+ * - Se o app é aceito somente por um determinado campus ou se é
+ * somente para servidores etc.
+ */
+function isAuthAllowed(user: User): Boolean {
+  console.log(user);
+
+  // Se é somente para servidor
+  if (
+    Constants.IS_ALLOWED_ONLY_GOVERNMENT_EMPLOYEES &&
+    user.matricula.toString().length > 7
+  )
+    return false;
+
+  // Se não pertence aos campi permitidos
+  if (!Constants.ALLOWED_CAMPI.includes(user.campus?.short!)) return false;
+
+  return true;
 }
