@@ -1,8 +1,8 @@
 import express from "express";
 import authMiddleware from "../auth/auth.middleware";
 import UserController from "./user.controller";
-import createByMatriculaValidator from "./validators/createByMatriculaValidator";
-import createValidator from "./validators/createValidator";
+import createByMatriculaSchema from "./validators/createByMatriculaSchema";
+import createSchema from "./validators/createSchema";
 
 const router = express.Router();
 
@@ -12,14 +12,14 @@ router.get("/suap/users", [authMiddleware], UserController.all);
 //
 router.post(
   "/suap/users",
-  [authMiddleware, createValidator],
+  [authMiddleware, createSchema],
   UserController.create
 );
 
 //
 router.post(
   "/suap/users/by_matricula",
-  [authMiddleware, createByMatriculaValidator],
+  [authMiddleware, createByMatriculaSchema],
   UserController.createByMatricula
 );
 
