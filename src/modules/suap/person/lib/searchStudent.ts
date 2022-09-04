@@ -20,36 +20,14 @@ export type personFilterOptions = {
 export default async function searchStudent(
   term: string,
   cookie: string | string[],
-  options: Partial<personFilterOptions> = {}
+  options: Partial<personFilterOptions> = {},
+  page: number = 1
 ) {
-  // Dados das opções
-  const { year, campus, diaryId, classId, statusId = "1" } = options;
-
-  // Pega a sigla do campus e a converte para seu ID
-  const campusId = campus?.id.toString();
-
-  // Pega o ano e o converte para seu id
-  const yearId = Year.get(year !== undefined ? +year : 0)?.id || "";
-
-  // Executa a busca
-  const result = await SUAP.setCookie(cookie).post("/json/edu/aluno/", {
-    q: term,
-    control: controlSearchStudent,
-    // Os valores precisam ir como string
-    filter_pks: JSON.stringify({
-      curso_campus__diretoria__setor__uo__in: campusId,
-      curso_campus__diretoria__in: "",
-      curso_campus__in: "",
-      matriculaperiodo__matriculadiario__diario__turma__pk__in: classId,
-      matriculaperiodo__matriculadiario__diario__pk__in: diaryId,
-      situacao__id__in: statusId,
-      ano_letivo__pk: yearId,
-    }),
-    search_fields: "pessoa_fisica__search_fields_optimized,matricula",
-  });
+  // Efetua as buscas com os parâmetros definidos
+  const result = await searchAutocompleteStudent(term, cookie, options, page);
 
   //
-  const { items = [] } = JSON.parse(result);
+  const { items = [] } = result;
 
   // Converte o resultado em uma lista de alunos do tipo Person
   // com o tipo padrão aluno
@@ -58,4 +36,47 @@ export default async function searchStudent(
   );
 
   return list;
+}
+
+/**
+ * Efetua a busca
+ */
+export async function searchAutocompleteStudent(
+  term: string,
+  cookie: string | string[],
+  options: Partial<personFilterOptions> = {},
+  page: number = 1
+) {
+  try {
+    // Dados das opções
+    const { year, campus, diaryId, classId, statusId = "1" } = options;
+
+    // Pega a sigla do campus e a converte para seu ID
+    const campusId = campus?.id.toString();
+
+    // Pega o ano e o converte para seu id
+    const yearId = Year.get(year !== undefined ? +year : 0)?.id || "";
+
+    // Executa a busca
+    const result = await SUAP.setCookie(cookie).post("/json/edu/aluno/", {
+      q: term,
+      control: controlSearchStudent,
+      // Os valores precisam ir como string
+      filter_pks: JSON.stringify({
+        curso_campus__diretoria__setor__uo__in: campusId,
+        curso_campus__diretoria__in: "",
+        curso_campus__in: "",
+        matriculaperiodo__matriculadiario__diario__turma__pk__in: classId,
+        matriculaperiodo__matriculadiario__diario__pk__in: diaryId,
+        situacao__id__in: statusId,
+        ano_letivo__pk: yearId,
+      }),
+      page: page,
+      search_fields: "pessoa_fisica__search_fields_optimized,matricula",
+    });
+
+    return JSON.parse(result);
+  } catch (error) {
+    return { total: 0, items: [] };
+  }
 }

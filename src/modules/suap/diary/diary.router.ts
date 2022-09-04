@@ -6,4 +6,11 @@ const router = express.Router();
 
 router.get("/suap/diaries", [authMiddleware], DiaryController.search);
 
+//
+router.get(
+  "/suap/diaries/:diaryId",
+  [authMiddleware],
+  DiaryController.searchById
+);
+
 export default router;

@@ -6,8 +6,31 @@ import Year from "data/models/year";
 
 import authRepository from "../auth/auth.repository";
 import searchDiaries from "./lib/searchDiaries";
+import { searchAutocompleteStudent } from "../person/lib/searchStudent";
+import getDiaryById from "./lib/getDiaryById";
 
 export default class DiaryController {
+  /**
+   * Pesquisa um diário pelo seu id e retorna as informações completas,
+   * inclusive a lista de alunos
+   *
+   */
+  static async searchById(request: Request, response: Response) {
+    try {
+      const { diaryId } = request.params;
+
+      const cookie = await authRepository.getCookie(request.user as User);
+
+      if (!cookie) throw {};
+
+      const result = await getDiaryById(diaryId, cookie);
+
+      return response.success(result);
+    } catch (error) {
+      return response.exception(error);
+    }
+  }
+
   /**
    * Pesquisa pessoas do campus do usuário logado
    * Esta busca inclui alunos, servidores e prestadores de serviço
