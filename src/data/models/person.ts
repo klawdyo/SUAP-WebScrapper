@@ -1,6 +1,6 @@
 import { load } from "cheerio";
 import { autocompletePerson } from "data/types/autocompletePerson";
-import { personType } from "data/enums/personType";
+import { personType } from "../enums/personType";
 import SUAP from "../../lib/suap";
 
 export default class Person {
