@@ -1,4 +1,4 @@
-import cheerio from "cheerio";
+import { load } from "cheerio";
 
 /**
  * Retorna os cookies em formato de string para enviar noform de login
@@ -30,6 +30,6 @@ export function cookieParser(cookies: string[] | undefined = []): string {
  * @returns Retorna o valor do token
  */
 export function getCSRFMmiddlewareToken(html: string) {
-  const $ = cheerio.load(html);
+  const $ = load(html);
   return $("input[name=csrfmiddlewaretoken]:first").attr("value");
 }

@@ -52,9 +52,6 @@ export default async function login(
         profile.occupation = personData[0].occupation;
       }
 
-      console.log("person data", personData);
-      console.log("profile", profile);
-
       //
       user = await userRepository.save(profile);
     }
