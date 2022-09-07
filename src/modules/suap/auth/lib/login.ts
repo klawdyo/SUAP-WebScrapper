@@ -52,9 +52,6 @@ export default async function login(
         profile.occupation = personData[0].occupation;
       }
 
-      console.log("person data", personData);
-      console.log("profile", profile);
-
       //
       user = await userRepository.save(profile);
     }
@@ -94,8 +91,6 @@ export default async function login(
  * somente para servidores etc.
  */
 function isAuthAllowed(user: User): Boolean {
-  console.log(user);
-
   // Se é somente para servidor
   if (
     Constants.IS_ALLOWED_ONLY_GOVERNMENT_EMPLOYEES &&

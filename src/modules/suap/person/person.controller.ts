@@ -5,6 +5,7 @@ import Year from "data/models/year";
 import authRepository from "../auth/auth.repository";
 import searchPerson from "./lib/searchPerson";
 import searchStudent, { personFilterOptions } from "./lib/searchStudent";
+import studentsByDiary from "./lib/studentsByDiary";
 
 export default class PersonController {
   /**
@@ -83,6 +84,24 @@ export default class PersonController {
     } catch (error) {
       console.log(error);
 
+      return response.exception(error);
+    }
+  }
+
+  /**
+   *
+   */
+  static async byDiary(request: Request, response: Response) {
+    try {
+      const { diaryId = "" } = request.params;
+      const cookie = await authRepository.getCookie(request.user as User);
+
+      if (!cookie) throw null;
+
+      const list = await studentsByDiary(diaryId, cookie);
+
+      return response.success(list);
+    } catch (error) {
       return response.exception(error);
     }
   }

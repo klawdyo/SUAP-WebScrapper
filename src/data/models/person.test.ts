@@ -1,4 +1,4 @@
-import { personType } from "data/enums/personType";
+import { personType } from "../enums/personType";
 import Person from "./person";
 
 describe("Model Person", () => {
