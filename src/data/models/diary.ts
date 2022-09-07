@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import { autocompleteDiary } from "data/types/autocompleteDiary";
 import Person from "./person";
+import Student from "./student";
 
 export default class Diary {
   suapId: number;
@@ -9,7 +10,7 @@ export default class Diary {
   workload?: number;
   classes?: number;
   level?: string;
-  students?: Person[];
+  students?: Student[];
 
   constructor(item: Record<string, any>) {
     this.suapId = +item.suapId;

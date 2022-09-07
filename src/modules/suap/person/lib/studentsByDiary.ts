@@ -3,6 +3,7 @@ import SUAP from "lib/suap";
 import parseTable from "lib/utils/parseTable";
 
 import { load } from "cheerio";
+import Student from "data/models/student";
 
 export default async function studentsByDiary(
   diaryId: string,
@@ -38,5 +39,7 @@ export default async function studentsByDiary(
     "course",
   ];
 
-  return parseTable($("table.mb-2").parent().html(), headers);
+  const list = parseTable($("table.mb-2").parent().html(), headers);
+
+  return list.map((student) => new Student(student));
 }

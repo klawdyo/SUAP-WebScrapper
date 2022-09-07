@@ -91,8 +91,6 @@ export default async function login(
  * somente para servidores etc.
  */
 function isAuthAllowed(user: User): Boolean {
-  console.log(user);
-
   // Se é somente para servidor
   if (
     Constants.IS_ALLOWED_ONLY_GOVERNMENT_EMPLOYEES &&
