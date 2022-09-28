@@ -7,3 +7,4 @@ db.sqlite
 prisma/dev.db
 prisma/dev.db-journal
 yarn-error.log
+.coverage

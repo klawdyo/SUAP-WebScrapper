@@ -10,6 +10,9 @@ module.exports = {
   },
   testRegex: "(/src/.*\\.(test|spec))\\.(jsx?|tsx?)$",
   testEnvironment: "node",
-  coverageDirectory: "./coverage/",
   maxWorkers: 1,
+  //
+  coverageDirectory: "./.coverage/",
+  collectCoverage: true,
+  coverageProvider: "v8",
 };
