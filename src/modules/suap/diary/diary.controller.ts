@@ -43,7 +43,7 @@ export default class DiaryController {
         term = "",
         campus = "IP",
         year = "2022",
-        semester = 1,
+        semester = 2,
       } = request.query;
 
       const cookie = await authRepository.getCookie(request.user as User);

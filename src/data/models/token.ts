@@ -9,8 +9,8 @@ class Token {
     if (!json) return;
 
     this.id = json.id;
-    this.userId = json.userId ? +json.userId : -1;
-    this.cookie = json.cookie ? json.cookie : "";
+    this.userId = json.userId;
+    this.cookie = json.cookie;
     this.createdAt = json.createdAt;
     this.updatedAt = json.updatedAt;
   }
@@ -18,7 +18,7 @@ class Token {
   toJSON() {
     return {
       id: this.id || null,
-      userId: this.userId || null,
+      userId: this.userId,
       cookie: this.cookie || null,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,

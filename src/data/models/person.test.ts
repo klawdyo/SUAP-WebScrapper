@@ -1,7 +1,117 @@
 import { personType } from "../enums/personType";
 import Person from "./person";
 
-describe("Model Person", () => {
+const data = (merge = {}) => ({
+  suapId: 40443,
+  name: "Jose Claudio Medeiros de Lima",
+  image: "https://",
+  matricula: "1673621",
+  cpf: "01234567890",
+  sector: "SEAC/IP",
+  // course: "",
+  occupation: "Assistente em Administração",
+  type: personType.SERVIDOR,
+
+  //
+  ...merge,
+});
+
+describe("models/person", () => {
+  //
+  test("Should be successfully instanced employee", () => {
+    const person = new Person(data());
+
+    // console.log("Person", person);
+
+    expect(person).toBeDefined();
+    expect(person.suapId).toBe(40443);
+    expect(person.name).toBe("Jose Claudio Medeiros de Lima");
+    expect(person.image).toBe("https://");
+    expect(person.matricula).toBe("1673621");
+    expect(person.cpf).toBe("01234567890");
+    expect(person.sector).toBe("SEAC/IP");
+    expect(person.course).toBeUndefined();
+    expect(person.occupation).toBe("Assistente em Administração");
+    expect(person.type).toBe(personType.SERVIDOR);
+  });
+
+  //
+  test("Should be successfully instanced employee", () => {
+    const person = new Person(data({ suapId: "" }));
+    const json = person.toJSON();
+    console.log(json);
+
+    expect(json.suapId).toBe(-1);
+  });
+
+  //
+  test("Should be successfully instanced student", () => {
+    const person = new Person(
+      data({
+        course: "Meio Ambiente",
+        type: personType.ALUNO,
+        occupation: undefined,
+        sector: undefined,
+      })
+    );
+
+    // console.log("Person", person);
+
+    expect(person).toBeDefined();
+    expect(person.suapId).toBe(40443);
+    expect(person.name).toBe("Jose Claudio Medeiros de Lima");
+    expect(person.image).toBe("https://");
+    expect(person.matricula).toBe("1673621");
+    expect(person.cpf).toBe("01234567890");
+    expect(person.sector).toBeUndefined();
+    expect(person.course).toBe("Meio Ambiente");
+    expect(person.occupation).toBeUndefined();
+    expect(person.type).toBe(personType.ALUNO);
+  });
+
+  //
+  test("Should be successfully converted to JSON", () => {
+    const person = new Person(data());
+    const json = person.toJSON();
+
+    // console.log("Person.toJSON", json);
+
+    expect(json).toMatchObject({
+      suapId: 40443,
+      name: "Jose Claudio Medeiros de Lima",
+      image: "https://",
+      matricula: "1673621",
+      cpf: "01234567890",
+      sector: "SEAC/IP",
+      course: null,
+      occupation: "Assistente em Administração",
+      type: "government_employee",
+    });
+  });
+
+  //
+  test("Should be successfully converted to JSON from empty object", () => {
+    const person = new Person({});
+    const json = person.toJSON();
+
+    // console.log("Person.toJSON", json);
+    expect(json).toMatchObject({
+      suapId: -1,
+      name: null,
+      image: null,
+      matricula: null,
+      cpf: null,
+      sector: null,
+      course: null,
+      occupation: null,
+      type: null,
+    });
+  });
+
+  //
+  // Gera uma instância de uma pessoa
+  // A partir do autocomplete do SUAP
+  //
   test("Servidor", () => {
     const servidor = {
       id: 40058,
@@ -11,7 +121,7 @@ describe("Model Person", () => {
     };
     const result = Person.fromAutocomplete(servidor);
 
-    console.log(result);
+    // console.log(result);
     expect(result).toBeInstanceOf(Person);
 
     expect(result).toMatchObject({
@@ -19,7 +129,7 @@ describe("Model Person", () => {
       image:
         "https://suap.ifrn.edu.br/media/fotos/75x100/2543.LafUPyr4RD2t.jpg",
       name: "Jose Claudio Medeiros de Lima",
-      matricula: 1673621,
+      matricula: "1673621",
       type: personType.SERVIDOR,
     });
   });
@@ -35,14 +145,14 @@ describe("Model Person", () => {
     };
     const result = Person.fromAutocomplete(aluno);
 
-    console.log(result);
+    // console.log(result);
     expect(result).toBeInstanceOf(Person);
 
     expect(result).toMatchObject({
       suapId: 367830,
       name: "Ana Vitória Barbalho da Siva",
       image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
-      matricula: 202110510650035,
+      matricula: "202110510650035",
       course:
         "051065 - ProiTEC - Programa de Iniciação Tecnológica e Cidadania (CAMPUS IPANGUAÇU)",
       type: personType.ALUNO,
@@ -57,7 +167,7 @@ describe("Model Person", () => {
     };
     const result = Person.fromAutocomplete(terceirizado);
 
-    console.log(result);
+    // console.log(result);
     expect(result).toBeInstanceOf(Person);
 
     expect(result).toMatchObject({
@@ -79,7 +189,7 @@ describe("Model Person", () => {
     };
     const result = Person.fromAutocomplete(terceirizada);
 
-    console.log(result);
+    // console.log(result);
     expect(result).toBeInstanceOf(Person);
 
     expect(result).toMatchObject({
@@ -102,18 +212,37 @@ describe("Model Person", () => {
     };
     const result = Person.fromAutocomplete(aluno, personType.ALUNO);
 
-    console.log(result);
+    // console.log(result);
     expect(result).toBeInstanceOf(Person);
 
     // expect(result).toMatchObject({
     //   suapId: 367830,
     //   name: "Ana Vitória Barbalho da Siva",
     //   image: "https://suap.ifrn.edu.br/static/comum/img/default.jpg",
-    //   matricula: 202110510650035,
+    //   matricula: '202110510650035',
     //   course:
     //     "051065 - ProiTEC - Programa de Iniciação Tecnológica e Cidadania (CAMPUS IPANGUAÇU)",
     //   type: personType.ALUNO,
     // });
   });
   //*/
+
+  //
+  test("Should text not be matching pattern", () => {
+    const person = Person.fromAutocomplete({ html: "", id: 1, text: "cla" });
+    expect(person).toBeNull();
+  });
+
+  //
+  test("Should html not be defined image", () => {
+    const person = Person.fromAutocomplete({
+      html: '<div class="person">             <div class="photo-circle">                 <img alt="Foto de Naciso Martins Xavier Filho (20221054010028)" />             </div>             <dl><dt class="sr-only">Nome</dt><dd><strong>Naciso Martins Xavier Filho (20221054010028)</strong></dd><dt class="sr-only">Curso</dt><dd>05401 - T\u00e9cnico de N\u00edvel M\u00e9dio em Inform\u00e1tica, na Forma Integrado (2012) - Campus Ipangua\u00e7u (CAMPUS IPANGUA\u00c7U)</dd><dt class="sr-only">Caracteriza\u00e7\u00e3o</dt><dd class="true">Realizou caracteriza\u00e7\u00e3o</dd><dt class="sr-only">Inscri\u00e7\u00e3o</dt><dd class="false">N\u00e3o inscrito em programa</dd></dl>         </div>',
+      id: 1,
+      text: "Naciso Martins Xavier Filho (20221054010028)",
+    });
+
+    console.log(person);
+
+    expect(person?.image).toBe("");
+  });
 });

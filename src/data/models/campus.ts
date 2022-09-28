@@ -44,7 +44,7 @@ export default class Campus {
   }
 
   /**
-   * Localiza o id a partir do ano
+   * Localiza o objeto campus a partir da sigla
    * @param campus
    * @returns
    */

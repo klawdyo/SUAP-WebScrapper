@@ -27,15 +27,12 @@ export default class Year {
   }
 
   /**
-   * Localiza o id a partir do ano
+   * Retorna uma instância de Year a partir do ano
    * @param year
    * @returns
    */
   static get(year: number): Year | undefined {
     const item: any = this.years.find((item: Year) => item.year === year);
     if (item !== undefined) return item;
-
-    // Retorna o último se não encontrar acima
-    // return this.years[this.years.length - 1] as Year;
   }
 }

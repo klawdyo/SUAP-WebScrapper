@@ -31,7 +31,7 @@ export default class Person {
    */
   toJSON(): Record<string, any> {
     return {
-      suapId: this.suapId || null,
+      suapId: this.suapId,
       name: this.name || null,
       image: this.image || null,
       matricula: this.matricula || null,
@@ -52,41 +52,37 @@ export default class Person {
     person: autocompletePerson,
     defaultType: personType | undefined = undefined
   ): Person | null {
-    try {
-      const result: Person = new Person({
-        suapId: person.id,
-        name: "",
-        image: "",
-      });
+    const result: Person = new Person({
+      suapId: person.id,
+      name: "",
+      image: "",
+    });
 
-      const $ = load(person.html);
+    const $ = load(person.html);
 
-      // Imagem
-      result.image = SUAP.baseURL + $("img").attr("src") || "";
+    const src = $("img").attr("src");
 
-      // Setor - Para terceirizados e servidores
-      result.sector = $("dt:contains(Setor)").next("dd").text();
+    // Imagem
+    result.image = src ? SUAP.baseURL + $("img").attr("src") : "";
 
-      // Curso - Para alunos
-      result.course = $("dt:contains(Curso)").next("dd").text();
+    // Setor - Para terceirizados e servidores
+    result.sector = $("dt:contains(Setor)").next("dd").text();
 
-      // Cargo - Para servidores
-      result.occupation = $("dt:contains(Cargo)").next("dd").text();
+    // Curso - Para alunos
+    result.course = $("dt:contains(Curso)").next("dd").text();
 
-      // Parse da chave text
-      const nameRgx =
-        /(?<name>.*?) \((?<identification>.*?)\)( \((?<type>.*?)\))?/i;
-      const nameMatch = nameRgx.exec(person.text);
+    // Cargo - Para servidores
+    result.occupation = $("dt:contains(Cargo)").next("dd").text();
 
-      // Se não encontrou um nome, encerre
-      if (!nameMatch) return null;
+    // Parse da chave text
+    const nameRgx =
+      /(?<name>.*?) \((?<identification>.*?)\)( \((?<type>.*?)\))?/i;
+    const nameMatch = nameRgx.exec(person.text);
 
+    // Se não encontrou um nome, encerre
+    if (nameMatch?.groups) {
       // Dados iniciais
-      const {
-        type = "",
-        identification = "",
-        name = "",
-      } = nameMatch?.groups || {};
+      const { type = "", identification = "", name = "" } = nameMatch.groups;
 
       result.name = name;
 
@@ -120,10 +116,8 @@ export default class Person {
       }
 
       return new Person(result);
-    } catch (error) {
-      console.log(error);
-
-      return null;
     }
+
+    return null;
   }
 }

@@ -26,7 +26,7 @@ export default class Student {
       name: this.name || null,
       matricula: this.matricula || null,
       birth: this.birth || null,
-      age: this.age || false,
+      age: this.age || null,
     };
   }
 }

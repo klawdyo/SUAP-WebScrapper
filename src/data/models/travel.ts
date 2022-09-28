@@ -53,6 +53,12 @@ export default class Travel {
     }
   }
 
+  /**
+   * Converte um array de objetos em uma lista de objetos do tipo Travel
+   *
+   * @param list Array de objetos
+   * @returns Travel[]
+   */
   static toList(list: Record<string, string>[]): Travel[] {
     return list.map((item) => new Travel(item));
   }
