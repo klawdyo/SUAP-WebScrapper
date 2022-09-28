@@ -1,14 +1,22 @@
 import cheerio from "cheerio";
 
 /**
- * Retorna os cookies em formato de string para enviar noform de login
+ * Retorna os cookies em formato de string para enviar no form de login.
+ * - Se os cookies forem uma string, transforme para array
+ * - Com o array, filtre os cookies para remover cookies fora do padrão:
+ *    - __Host-csrftoken=
+ *    - __Host-suap-control=
+ *    - __Host-sessionid=
+ *  - Com os dados filtrados, junte-os novamente em uma string
+ *
+ *
  * @param cookies
  * @returns
  */
 export function cookieParser(
   cookies: string | string[] | undefined = []
 ): string {
-  if (cookies === undefined || cookies === null) {
+  if (!cookies) {
     return "";
   }
 
