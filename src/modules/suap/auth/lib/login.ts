@@ -8,7 +8,7 @@ import userRepository from "modules/suap/user/user.repository";
 import authRepository from "../auth.repository";
 import employeeProfileParser from "../../user/lib/employeeProfileParser";
 import { loginResponse } from "data/types/authResponse";
-import Constants from "data/constants/contants";
+import Constants from "data/constants/constants";
 
 /**
  * Efetua o login no SUAP, verifica se o usuário está apto a efetuar login e
