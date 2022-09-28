@@ -2,6 +2,7 @@ node_modules/
 dist/
 db.sqlite
 .env
+.env.test
 *.db
 prisma/dev.db
 prisma/dev.db-journal
