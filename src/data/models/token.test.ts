@@ -25,7 +25,6 @@ describe("models/token", () => {
 
   test("Should be undefined if json is null", () => {
     const token = new Token(null);
-    console.log(token);
 
     expect(token).toBeDefined();
     expect(token.id).toBeUndefined();
@@ -48,7 +47,6 @@ describe("models/token", () => {
   test("Should be successfully converted to empty JSON", () => {
     const token = new Token(null);
     const json = token.toJSON();
-    console.log(json);
 
     expect(json).toBeDefined();
     expect(json.id).toBeNull();

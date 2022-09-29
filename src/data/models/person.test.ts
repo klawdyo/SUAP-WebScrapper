@@ -39,7 +39,6 @@ describe("models/person", () => {
   test("Should be successfully instanced employee", () => {
     const person = new Person(data({ suapId: "" }));
     const json = person.toJSON();
-    console.log(json);
 
     expect(json.suapId).toBe(-1);
   });
@@ -240,8 +239,6 @@ describe("models/person", () => {
       id: 1,
       text: "Naciso Martins Xavier Filho (20221054010028)",
     });
-
-    console.log(person);
 
     expect(person?.image).toBe("");
   });

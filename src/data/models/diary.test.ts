@@ -67,8 +67,6 @@ describe("models/diary", () => {
       text: "11400s Renováveis(45H)  - Médio [45 h/60 Aulas]",
     });
 
-    console.log(diary);
-
     expect(diary).toBeNull();
     // expect(diary?.suapId).toBe(11400);
   });

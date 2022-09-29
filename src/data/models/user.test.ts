@@ -48,8 +48,6 @@ describe("models/user", () => {
     const user = new User(data());
     const json = user.toJSON();
 
-    console.log(json);
-
     expect(json).toMatchObject({
       matricula: "1673621",
       cpf: "01234567890",
@@ -80,8 +78,6 @@ describe("models/user", () => {
   test("Should be empty instance", () => {
     const user = new User(null);
 
-    console.log("user vazio", user);
-
     expect(user).toBeInstanceOf(User);
     expect(user.isEmpty()).toBeTruthy();
     expect(user.isNotEmpty()).toBeFalsy();
@@ -91,8 +87,6 @@ describe("models/user", () => {
   test("Should be json with empty values", () => {
     const user = new User(null);
     const json = user.toJSON();
-
-    console.log("user vazio", user);
 
     expect(json.cpf).toBe("");
     expect(json.email).toBe("");
