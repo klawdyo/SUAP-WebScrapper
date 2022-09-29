@@ -16,7 +16,8 @@ import router from "./routes";
 import Output from "lib/output";
 import User from "data/models/user";
 
-// Inclui o valor de usuário logado na interface do request
+// Inclui uma propriedade que será usada para incluir o
+// usuário logado na interface do request
 declare global {
   namespace Express {
     interface Request {
@@ -40,6 +41,9 @@ class AppController {
     this.express.use(express.urlencoded({ extended: true }));
     this.express.use(cors());
     this.express.use(helmet());
+
+    // Inclui na interface de Response os métodos usados para
+    // retorno http, como not found, forbidden etc.
     this.express.use(Output.middleware);
   }
 
