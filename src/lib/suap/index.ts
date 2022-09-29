@@ -1,6 +1,4 @@
-import { Got, gotScraping, Headers } from "got-scraping";
-import cheerio from "cheerio";
-import User from "data/models/user";
+import { gotScraping, Headers } from "got-scraping";
 import { cookieParser, getCSRFMmiddlewareToken } from "./utils";
 import { URLSearchParams } from "url";
 
@@ -77,15 +75,6 @@ class SUAP {
         "https://suap.ifrn.edu.br/accounts/login/?next=/",
         {
           headers: this.getHeaders(),
-          // headers: {
-          //   "Content-Type": "application/x-www-form-urlencoded",
-          //   "user-agent":
-          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          //   Host: "suap.ifrn.edu.br",
-          //   Origin: "https://suap.ifrn.edu.br",
-          //   Pragma: "no-cache",
-          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          // },
         }
       );
 
@@ -112,16 +101,6 @@ class SUAP {
           headers: this.addHeaders({
             "Content-Type": "application/x-www-form-urlencoded",
           }).getHeaders(initialCookies),
-          // headers: {
-          //   "Content-Type": "application/x-www-form-urlencoded",
-          //   "user-agent":
-          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          //   Cookie: initialCookies,
-          //   Host: "suap.ifrn.edu.br",
-          //   Origin: "https://suap.ifrn.edu.br",
-          //   Pragma: "no-cache",
-          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          // },
           form: payload,
           followRedirect: false,
         }
@@ -130,7 +109,7 @@ class SUAP {
       // Os cookies retornados após o login
       const loggedCookies = login.headers["set-cookie"];
 
-      // Se existem cookies retornados
+      // Se não existem cookies retornados
       if (!loggedCookies)
         throw {
           code: 403,
