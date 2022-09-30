@@ -6,7 +6,25 @@ const table = `
 
 describe("parseTable", () => {
   //
-  test("Verifica ", () => {
+  it("Should returns a parsed table with undefined headers ", () => {
+    const result = parseTable(table);
+
+    expect(result.length).toBe(14);
+
+    expect(result[0]).toMatchObject({
+      "#": "1",
+      id: "269054",
+      Matrícula: "20201053050007",
+      Nome: "Damiana Eduarda Avelino da Silva",
+      Campus: "IP",
+      "Data de Nascimento": "11/11/1997",
+      "Descrição do Curso":
+        "Técnico de Nível Médio em Agroecologia, na Forma Integrada, na Modalidade EJA (2012) - Campus Ipanguaçu",
+    });
+  });
+
+  //
+  it("Should returns a parsed table with defined headers ", () => {
     const headers = [
       "seq",
       "id",
@@ -31,5 +49,12 @@ describe("parseTable", () => {
       course:
         "Técnico de Nível Médio em Agroecologia, na Forma Integrada, na Modalidade EJA (2012) - Campus Ipanguaçu",
     });
+  });
+
+  //
+  it("Should returns an empty array ", () => {
+    const result = parseTable("");
+
+    expect(result).toMatchObject([]);
   });
 });

@@ -35,7 +35,8 @@ class SUAP {
         headers: this.getHeaders(cookies),
       });
 
-      return result.body;
+      if (result.statusCode === 200) return result.body;
+      else throw { code: result.statusCode };
     } catch (error) {
       throw error;
     }
@@ -59,7 +60,10 @@ class SUAP {
         form: data,
       });
 
-      return result.body;
+      console.log("POST", path, "->", result.statusCode, result.statusMessage);
+
+      if (result.statusCode === 200) return result.body;
+      else throw { code: result.statusCode };
     } catch (error) {
       throw error;
     }
@@ -86,7 +90,7 @@ class SUAP {
 
       // Cria o payload inicial para fazer o login
       const payload = {
-        csrfmiddlewaretoken: csrfToken ?? "",
+        csrfmiddlewaretoken: csrfToken,
         username: matricula,
         password: password,
         this_is_the_login_form: "1",
@@ -106,37 +110,8 @@ class SUAP {
         }
       );
 
-      // Os cookies retornados após o login
-      const loggedCookies = login.headers["set-cookie"];
-
-      // Se não existem cookies retornados
-      if (!loggedCookies)
-        throw {
-          code: 403,
-          message: "Erro ao realizar login",
-        };
-
-      // O SUAP inicialmente retorna 2 cookies: sessionid e csrftoken
-      // Estes 2 são retornados em todas as requisições, independente
-      // de estar ou não estar logado
-      // Já o cookie 'suap-control' só é retornado com o usuário logado
-      // Dessa forma, se ele for encontrado nos cookies retornados o
-      // login aconteceu com sucesso
-      const hasSuapControl = loggedCookies?.some((cookie) =>
-        cookie.startsWith("__Host-suap-control")
-      );
-
-      // Verifica se contém o cookie específico de logado do SUAP
-      if (hasSuapControl) {
-        return JSON.stringify(login.headers["set-cookie"]);
-      }
-      // Não foi encontrado o cookie suap-control nos cookies retornados
-      else {
-        throw {
-          code: 403,
-          message: "Usuário ou senha inválidos",
-        };
-      }
+      // Avalia se o usuário está logado apenas verificando os cookies
+      return SUAP.checkHasLoggedCookies(login.headers["set-cookie"]);
 
       // S
     } catch (error) {
@@ -157,7 +132,7 @@ class SUAP {
       cookies !== undefined &&
       typeof cookies === "string"
     ) {
-      cookies = cookies?.split(";");
+      cookies = cookies.split(";").map((item) => item.trim());
     }
 
     this.cookies = cookies ? cookies : [];
@@ -185,6 +160,40 @@ class SUAP {
     }
 
     return url;
+  }
+
+  /**
+   * Verifica se o usuário está logado apenas avaliando os cookies
+   */
+  static checkHasLoggedCookies(cookies: string[] | undefined) {
+    try {
+      // Os cookies retornados após o login
+      // const loggedCookies = login.headers["set-cookie"];
+
+      // O SUAP inicialmente retorna 2 cookies: sessionid e csrftoken
+      // Estes 2 são retornados em todas as requisições, independente
+      // de estar ou não estar logado
+      // Já o cookie 'suap-control' só é retornado com o usuário logado
+      // Dessa forma, se ele for encontrado nos cookies retornados o
+      // login aconteceu com sucesso
+      const hasSuapControl = cookies!.some((cookie: string) =>
+        cookie.startsWith("__Host-suap-control")
+      );
+
+      // Verifica se contém o cookie específico de logado do SUAP
+      if (hasSuapControl) {
+        return JSON.stringify(cookies);
+      }
+      // Não foi encontrado o cookie suap-control nos cookies retornados
+      else {
+        throw {
+          code: 403,
+          message: "Usuário ou senha inválidos",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -217,6 +226,12 @@ class SUAP {
     return headers;
   }
 
+  /**
+   * Acrescenta cabeçalhos aos que já estão incluídos na biblioteca
+   *
+   * @param headers Cabeçalhos a serem adicionados
+   * @returns
+   */
   static addHeaders(headers: Record<string, any>) {
     this._additionalHeaders = headers;
 

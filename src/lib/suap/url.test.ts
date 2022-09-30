@@ -2,7 +2,7 @@ import SUAP from "./index";
 
 const base = SUAP.baseURL;
 
-describe("lib/url", () => {
+describe("lib/suap/url", () => {
   //
   test("Teste de url sem parametro", () => {
     const url = SUAP.url("/account");
