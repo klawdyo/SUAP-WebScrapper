@@ -7,4 +7,4 @@ db.sqlite
 prisma/dev.db
 prisma/dev.db-journal
 yarn-error.log
-__TESTS__/coverage
+tests/coverage

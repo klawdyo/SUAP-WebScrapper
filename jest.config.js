@@ -13,9 +13,9 @@ module.exports = {
   maxWorkers: 1,
   // Arquivo de Setup para os testes, onde carrega o que for importante,
   // como o .env usado neles
-  setupFiles: ["<rootDir>/__TESTS__/setup_tests.ts"],
+  setupFiles: ["<rootDir>/tests/setup_tests.ts"],
   //
-  coverageDirectory: "./__TESTS__/coverage/",
-  collectCoverage: true,
+  coverageDirectory: "./tests/coverage/",
+  // collectCoverage: true,
   coverageProvider: "v8",
 };
