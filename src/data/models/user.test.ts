@@ -1,4 +1,4 @@
-import { personType } from "../enums/personType";
+import { personType } from "data/enums/personType";
 import Campus from "./campus";
 import User from "./user";
 

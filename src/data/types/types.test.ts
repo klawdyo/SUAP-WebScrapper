@@ -1,4 +1,4 @@
-import User from "../models/user";
+import User from "data/models/user";
 import { loginResponse } from "./authResponse";
 
 describe("data/types", () => {
