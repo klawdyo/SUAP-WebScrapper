@@ -1,3 +1,5 @@
+import app from "../../app";
+
 describe("home", () => {
   // biblioteca que faz os tests usando http
   const request = require("supertest");
@@ -6,7 +8,7 @@ describe("home", () => {
   // só foi colocado dentro do server.js e não dentro do app.js. O
   // supertest receberá esta constante app como parâmetro e ele será
   // responsável por criar o seu próprio servidor para rodar os testes
-  const app = require("/app");
+  // const app = require("/app");
   // beforeEach(async () => {
   // await truncateUser()
   // });
