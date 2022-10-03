@@ -16,6 +16,7 @@ export default async function searchTravelSchedules(
   onlyFuture: boolean = true
 ): Promise<Travel[]> {
   try {
+    const suap = new SUAP();
     //
     const url = "/admin/frota/viagemagendamento/";
 
@@ -29,7 +30,7 @@ export default async function searchTravelSchedules(
     if (term) query.q = term;
 
     // Recebe os resultados
-    const result = await SUAP.setCookie(cookie).get(url, query);
+    const result = await suap.setCookie(cookie).get(url, query);
 
     //
     return parseTripsTable(result);

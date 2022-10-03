@@ -23,8 +23,9 @@ export default async function login(
   password: string
 ): Promise<loginResponse> {
   try {
+    const suap = new SUAP();
     // Efetua o login no suap e pega o cookie
-    const cookie = await SUAP.getCookie(matricula, password);
+    const cookie = await suap.getCookie(matricula, password);
 
     // Pesquisa se o usuário já está cadastrado no banco de dados
     let user = await userRepository.first(matricula);
@@ -32,7 +33,7 @@ export default async function login(
     // Verifica se o usuário já está no banco de dados
     if (!user) {
       // Define o cookie e pega o conteúdo da página do usuário
-      const profileContent = await SUAP
+      const profileContent = await suap
         // Inclui o cookie
         .setCookie(cookie)
         // Realiza a requisição GET

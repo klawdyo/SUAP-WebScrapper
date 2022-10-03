@@ -23,9 +23,10 @@ export default async function studentsByDiary(
 
   const url = "/edu/relatorio";
 
-  const result = await SUAP.setCookie(cookie).get(
-    url + "?" + params.toString()
-  );
+  const suap = new SUAP();
+  const result = await suap
+    .setCookie(cookie)
+    .get(url + "?" + params.toString());
 
   const $ = load(result);
 

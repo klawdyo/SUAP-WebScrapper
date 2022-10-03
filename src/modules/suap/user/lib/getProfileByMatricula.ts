@@ -70,8 +70,9 @@ async function getEmployeeProfile(
   cookie: string
 ): Promise<User> {
   try {
+    const suap = new SUAP();
     // Define o cookie e pega o conteúdo da página do usuário
-    const profileContent = await SUAP
+    const profileContent = await suap
       // Inclui o cookie
       .setCookie(cookie)
       // Realiza a requisição GET
@@ -103,8 +104,9 @@ async function getStudentProfile(
   cookie: string
 ): Promise<User> {
   try {
+    const suap = new SUAP();
     // Define o cookie e pega o conteúdo da página do usuário
-    const profileContent = await SUAP
+    const profileContent = await suap
       // Inclui o cookie
       .setCookie(cookie)
       // Realiza a requisição GET

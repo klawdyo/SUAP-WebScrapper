@@ -7,7 +7,10 @@ export default async function searchPerson(
   term: string,
   cookie: string | string[]
 ): Promise<Person[]> {
-  const result = await SUAP.setCookie(cookie)
+  const suap = new SUAP();
+
+  const result = await suap
+    .setCookie(cookie)
     .addHeaders({
       "Content-Type": "application/x-www-form-urlencoded",
       charset: "UTF-8",

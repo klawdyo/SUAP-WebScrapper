@@ -14,7 +14,8 @@ export default async function searchDiaries(
   cookie: string | string[],
   options: Partial<diaryOptions> = {}
 ) {
-  const result = await SUAP.setCookie(cookie).post("/json/edu/diario/", {
+  const suap = new SUAP();
+  const result = await suap.setCookie(cookie).post("/json/edu/diario/", {
     q: term,
     control: controlSearchDiaryMessenger,
     // Os valores precisam ir como string

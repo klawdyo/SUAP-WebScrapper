@@ -4,7 +4,9 @@ import { cookieParser } from "./utils";
 describe("lib/suap/get_cookie", () => {
   //
   test("Should log in successfully", async () => {
-    const result = await SUAP.getCookie(
+    const suap = new SUAP();
+
+    const result = await suap.getCookie(
       process.env.SUAP_USER!.toString(),
       process.env.SUAP_PASS!.toString()
     );
@@ -18,8 +20,9 @@ describe("lib/suap/get_cookie", () => {
 
   //
   test("Should log in unsuccessful - Wrong password", async () => {
+    const suap = new SUAP();
     const fn = () =>
-      SUAP.getCookie(process.env.SUAP_USER!.toString(), "123456");
+      suap.getCookie(process.env.SUAP_USER!.toString(), "123456");
 
     await expect(fn).rejects.toMatchObject({
       code: 403,

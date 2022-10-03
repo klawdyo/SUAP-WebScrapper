@@ -9,8 +9,9 @@ const cookie = [
 describe("lib/suap/check_has_logged_cookie", () => {
   //
   it("Should returns an array cookies", () => {
+    const suap = new SUAP();
     //
-    const isLogged = SUAP.checkHasLoggedCookies(cookie);
+    const isLogged = suap.checkHasLoggedCookies(cookie);
 
     //
     expect(isLogged).toBeDefined();
@@ -21,13 +22,16 @@ describe("lib/suap/check_has_logged_cookie", () => {
     // Remove o cookie de logado
     const _cookie = [cookie[0], cookie[2]];
 
+    const suap = new SUAP();
+
     //
-    await expect(() => SUAP.checkHasLoggedCookies(_cookie)).toThrow();
+    await expect(() => suap.checkHasLoggedCookies(_cookie)).toThrow();
   });
 
   //
   it("Should throws", async () => {
+    const suap = new SUAP();
     //
-    await expect(() => SUAP.checkHasLoggedCookies(undefined)).toThrow();
+    await expect(() => suap.checkHasLoggedCookies(undefined)).toThrow();
   });
 });
