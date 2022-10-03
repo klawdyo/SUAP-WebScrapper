@@ -56,5 +56,4 @@ class AppController {
 
 const app = new AppController();
 
-module.exports = app.express; // <- Precisa "module.exports" e não "export default"
-//                            //    para que o supertest consiga usar.
+export default app.express;
