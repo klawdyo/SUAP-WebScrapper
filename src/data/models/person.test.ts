@@ -1,4 +1,4 @@
-import { personType } from "../enums/personType";
+import { personType } from "data/enums/personType";
 import Person from "./person";
 
 const data = (merge = {}) => ({

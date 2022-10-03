@@ -8,7 +8,7 @@ dotenv.config({
   path: process.env.NODE_ENV === "test" ? ".env.test" : ".env",
 });
 
-import express from "express";
+import express, { Express } from "express";
 import cors from "cors";
 import helmet from "helmet";
 
@@ -27,7 +27,7 @@ declare global {
 }
 
 class AppController {
-  express;
+  express: Express;
 
   constructor() {
     this.express = express();
@@ -54,4 +54,6 @@ class AppController {
   }
 }
 
-export default new AppController().express;
+const app = new AppController();
+
+export default app.express;
