@@ -6,12 +6,12 @@ class SUAP {
   /**
    *
    */
-  static cookies?: string[] | undefined;
+  cookies?: string[] | undefined;
 
   /**
    *
    */
-  static _additionalHeaders: Record<string, any> = {};
+  _additionalHeaders: Record<string, any> = {};
 
   /**
    * URL de base
@@ -25,13 +25,13 @@ class SUAP {
    * @param params Parâmetros da url em formato de objeto
    * @returns html da página
    */
-  static async get(
+  async get(
     path: string,
     params?: any,
     cookies?: string[] | undefined
   ): Promise<string> {
     try {
-      const result = await gotScraping.get(this.url(path, params), {
+      const result = await gotScraping.get(SUAP.url(path, params), {
         headers: this.getHeaders(cookies),
       });
 
@@ -49,13 +49,13 @@ class SUAP {
    * @param params Parâmetros da url em formato de objeto
    * @returns html da página
    */
-  static async post(
+  async post(
     path: string,
     data: Record<string, any> | undefined,
     cookies?: string[] | undefined
   ): Promise<string> {
     try {
-      const result = await gotScraping.post(this.url(path), {
+      const result = await gotScraping.post(SUAP.url(path), {
         headers: this.getHeaders(cookies),
         form: data,
       });
@@ -72,7 +72,7 @@ class SUAP {
   /**
    * Retorna os cookies
    */
-  static async getCookie(matricula: string, password: string): Promise<string> {
+  async getCookie(matricula: string, password: string): Promise<string> {
     try {
       // Requisita a página inicial
       const result = await gotScraping.get(
@@ -111,7 +111,7 @@ class SUAP {
       );
 
       // Avalia se o usuário está logado apenas verificando os cookies
-      return SUAP.checkHasLoggedCookies(login.headers["set-cookie"]);
+      return this.checkHasLoggedCookies(login.headers["set-cookie"]);
 
       // S
     } catch (error) {
@@ -125,7 +125,7 @@ class SUAP {
    * @param cookies
    * @returns
    */
-  static setCookie(cookies?: string | string[] | undefined | null) {
+  setCookie(cookies?: string | string[] | undefined | null) {
     // Se for string
     if (
       cookies !== null &&
@@ -153,7 +153,7 @@ class SUAP {
    * @returns
    */
   static url(path: string, params?: any) {
-    const url = `${this.baseURL}${path}`;
+    const url = `${SUAP.baseURL}${path}`;
 
     if (params) {
       return `${url}?${new URLSearchParams(params)}`;
@@ -165,7 +165,7 @@ class SUAP {
   /**
    * Verifica se o usuário está logado apenas avaliando os cookies
    */
-  static checkHasLoggedCookies(cookies: string[] | undefined) {
+  checkHasLoggedCookies(cookies: string[] | undefined) {
     try {
       // Os cookies retornados após o login
       // const loggedCookies = login.headers["set-cookie"];
@@ -202,7 +202,7 @@ class SUAP {
    * @param cookies
    * @returns
    */
-  static getHeaders(cookies?: string | string[] | undefined): Headers {
+  getHeaders(cookies?: string | string[] | undefined): Headers {
     let headers = {
       "user-agent":
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
@@ -232,7 +232,7 @@ class SUAP {
    * @param headers Cabeçalhos a serem adicionados
    * @returns
    */
-  static addHeaders(headers: Record<string, any>) {
+  addHeaders(headers: Record<string, any>) {
     this._additionalHeaders = headers;
 
     return this;

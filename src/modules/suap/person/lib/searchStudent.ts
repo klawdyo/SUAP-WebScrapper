@@ -48,6 +48,8 @@ export async function searchAutocompleteStudent(
   page: number = 1
 ) {
   try {
+    const suap = new SUAP();
+
     // Dados das opções
     const { year, campus, diaryId, classId, statusId = "1" } = options;
 
@@ -58,7 +60,7 @@ export async function searchAutocompleteStudent(
     const yearId = Year.get(year !== undefined ? +year : 0)?.id || "";
 
     // Executa a busca
-    const result = await SUAP.setCookie(cookie).post("/json/edu/aluno/", {
+    const result = await suap.setCookie(cookie).post("/json/edu/aluno/", {
       q: term,
       control: controlSearchStudent,
       // Os valores precisam ir como string

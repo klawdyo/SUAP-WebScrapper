@@ -3,8 +3,9 @@ import SUAP from ".";
 describe("lib/suap/headers", () => {
   //
   it("Should get headers", () => {
+    const suap = new SUAP();
     //
-    const headers = SUAP.getHeaders();
+    const headers = suap.getHeaders();
 
     expect(headers).toMatchObject({
       "user-agent":
@@ -19,9 +20,10 @@ describe("lib/suap/headers", () => {
 
   //
   it("Should add headers", () => {
+    const suap = new SUAP();
     //
-    SUAP.addHeaders({ "X-API": "SUAP WebScrapper" });
-    const headers = SUAP.getHeaders();
+    suap.addHeaders({ "X-API": "SUAP WebScrapper" });
+    const headers = suap.getHeaders();
 
     expect(headers).toMatchObject({
       "user-agent":

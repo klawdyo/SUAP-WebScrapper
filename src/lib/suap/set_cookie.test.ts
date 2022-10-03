@@ -14,9 +14,10 @@ const stringCookie =
 describe("lib/suap/set_cookie", () => {
   //
   it("Should set cookies as array", async () => {
-    SUAP.setCookie(arrayCookie);
+    const suap = new SUAP();
+    suap.setCookie(arrayCookie);
 
-    const cookies = SUAP.cookies;
+    const cookies = suap.cookies;
 
     expect(Array.isArray(cookies)).toBeTruthy();
     expect(cookies).toMatchObject(arrayCookie);
@@ -24,9 +25,10 @@ describe("lib/suap/set_cookie", () => {
 
   //
   it("Should set cookies as string", async () => {
-    SUAP.setCookie(stringCookie);
+    const suap = new SUAP();
+    suap.setCookie(stringCookie);
 
-    const cookies = SUAP.cookies;
+    const cookies = suap.cookies;
 
     expect(Array.isArray(cookies)).toBeTruthy();
     expect(cookies).toMatchObject(arrayCookie);
@@ -34,9 +36,10 @@ describe("lib/suap/set_cookie", () => {
 
   //
   it("Should set cookies as null", async () => {
-    SUAP.setCookie(null);
+    const suap = new SUAP();
+    suap.setCookie(null);
 
-    const cookies = SUAP.cookies;
+    const cookies = suap.cookies;
 
     expect(Array.isArray(cookies)).toBeTruthy();
     expect(cookies).toMatchObject([]);
@@ -44,9 +47,10 @@ describe("lib/suap/set_cookie", () => {
 
   //
   it("Should set cookies as undefined", async () => {
-    SUAP.setCookie(undefined);
+    const suap = new SUAP();
+    suap.setCookie(undefined);
 
-    const cookies = SUAP.cookies;
+    const cookies = suap.cookies;
 
     expect(Array.isArray(cookies)).toBeTruthy();
     expect(cookies).toMatchObject([]);
