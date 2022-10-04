@@ -6,17 +6,21 @@ import createSchema from "./validators/createSchema";
 
 const router = express.Router();
 
-//
-router.get("/suap/users", [authMiddleware], UserController.all);
+// Lista
+router.get(
+  "/suap/users",
+  [authMiddleware], //
+  UserController.all
+);
 
-//
+// Cria com dados
 router.post(
   "/suap/users",
   [authMiddleware, createSchema],
   UserController.create
 );
 
-//
+// Cria com matrícula
 router.post(
   "/suap/users/by_matricula",
   [authMiddleware, createByMatriculaSchema],
