@@ -22,14 +22,15 @@ export default class TravelController {
   static async search(request: Request, response: Response) {
     try {
       const cookie = await authRepository.getCookie(request.user as User);
-      const { term, only_future = true } = request.query;
+      const { term, only_future = true, campus = null } = request.query;
 
       if (!cookie) throw { code: 401, message: "Não autenticado" };
 
       const travelList = await searchTravelSchedules(
         cookie,
         term?.toString(),
-        toBoolean(only_future)
+        toBoolean(only_future),
+        campus?.toString()
       );
 
       return response.success(travelList);
