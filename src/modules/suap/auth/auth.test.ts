@@ -4,7 +4,7 @@ import app from "../../../app";
 
 console.log("env: ", process.env.NODE_ENV);
 
-describe("auth", () => {
+describe("module/auth", () => {
   // biblioteca que faz os tests usando http
   const request = require("supertest");
 

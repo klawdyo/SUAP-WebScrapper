@@ -2,7 +2,7 @@ import { getAuthorization } from "../../../../tests/hooks";
 
 import app from "../../../app";
 
-describe("diary", () => {
+describe("module/diary", () => {
   // biblioteca que faz os tests usando http
   const request = require("supertest");
 
