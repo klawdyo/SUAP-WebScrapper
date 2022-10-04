@@ -1,7 +1,15 @@
 import Validator from "lib/validator";
 
 const createByMatriculaSchema = Validator.schema((v: any) => ({
-  matricula: v.string().required(),
+  matricula: v // <- objeto Joi
+    .string()
+    .required()
+    .regex(/^\d+$/)
+    .messages({
+      "string.base": "Matrícula precisa ser uma string",
+      "string.pattern.name": "Matrícula precisa ser numérico",
+      "string.empty": "Campo obrigatório",
+    }),
 }));
 
 export default createByMatriculaSchema;
