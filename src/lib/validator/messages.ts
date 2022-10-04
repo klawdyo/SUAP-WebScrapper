@@ -6,4 +6,7 @@ export default {
   "any.required": "Campo obrigatório",
   "number.base": "Não é um número",
   "string.min": "Mínimo de {#limit} caracteres",
+
+  "string.base": "Precisa ser uma string",
+  "string.empty": "Campo obrigatório",
 };
