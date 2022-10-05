@@ -28,7 +28,7 @@
     "klawtil": "^0.14.1",
     "moment": "^2.29.4",
     "sqlite3": "^5.0.2",
-    "validation-br": "^1.4.1"
+    "validation-br": "^1.4.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
