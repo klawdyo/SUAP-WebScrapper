@@ -27,7 +27,8 @@
     "jsonwebtoken": "^8.5.1",
     "klawtil": "^0.14.1",
     "moment": "^2.29.4",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.0.2",
+    "validation-br": "^1.4.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
