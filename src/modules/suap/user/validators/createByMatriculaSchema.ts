@@ -7,7 +7,7 @@ const createByMatriculaSchema = Validator.schema((v: any) => ({
     .regex(/^\d+$/)
     .messages({
       "string.base": "Matrícula precisa ser uma string",
-      "string.pattern.name": "Matrícula precisa ser numérico",
+      "string.pattern.base": "Matrícula precisa ser numérico",
       "string.empty": "Campo obrigatório",
     }),
 }));
