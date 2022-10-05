@@ -1,13 +1,5 @@
 import Validator from "lib/validator";
-import { validateOrFail } from "validation-br/dist/cpf";
-
-const isCPF = (value: string | number, helper: any) => {
-  try {
-    validateOrFail(value);
-  } catch (error: any) {
-    return helper.message(error.message);
-  }
-};
+import { isCPF } from "lib/validator/extend";
 
 const createSchema = Validator.schema((v: any) => ({
   matricula: v.string().required(),
