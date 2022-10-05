@@ -4244,6 +4244,11 @@ v8-to-istanbul@^9.0.1:
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^1.6.0"
 
+validation-br@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/validation-br/-/validation-br-1.4.1.tgz#0df25fa7a881158c964161b15a9bcaf425a3192d"
+  integrity sha512-O9ju8vZRl2wutot3UEbVRX3mxQQd0ZsjVe3xzQGsL51OdiuokltI/a82PZ7MSkmhAvUosOh/5HcmOBcmAcDHUQ==
+
 vary@^1, vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
