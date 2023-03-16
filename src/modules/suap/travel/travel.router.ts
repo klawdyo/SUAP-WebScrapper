@@ -5,5 +5,6 @@ import TravelController from "./travel.controller";
 const router = express.Router();
 
 router.get("/suap/travels", [authMiddleware], TravelController.search);
+router.get("/suap/travels/:id", [authMiddleware], TravelController.first);
 
 export default router;

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import Campus from "models/campus";
-import User from "models/user";
-import Year from "models/year";
+import Campus from "data/models/campus";
+import User from "data/models/user";
+import Year from "data/models/year";
 import authRepository from "../auth/auth.repository";
 import searchPerson from "./lib/searchPerson";
 import searchStudent, { personFilterOptions } from "./lib/searchStudent";
+import studentsByDiary from "./lib/studentsByDiary";
 
 export default class PersonController {
   /**
@@ -26,9 +27,9 @@ export default class PersonController {
 
       const list = await searchPerson(term.toString(), cookie);
 
-      response.success(list);
+      return response.success(list);
     } catch (error) {
-      response.exception(error);
+      return response.exception(error);
     }
   }
   /**
@@ -79,11 +80,29 @@ export default class PersonController {
       const result = await searchStudent(term.toString(), cookie, options);
 
       //
-      response.success(result);
+      return response.success(result);
     } catch (error) {
       console.log(error);
 
-      response.exception(error);
+      return response.exception(error);
+    }
+  }
+
+  /**
+   *
+   */
+  static async byDiary(request: Request, response: Response) {
+    try {
+      const { diaryId = "" } = request.params;
+      const cookie = await authRepository.getCookie(request.user as User);
+
+      if (!cookie) throw null;
+
+      const list = await studentsByDiary(diaryId, cookie);
+
+      return response.success(list);
+    } catch (error) {
+      return response.exception(error);
     }
   }
 }

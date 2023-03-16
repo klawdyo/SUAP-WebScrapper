@@ -2,23 +2,20 @@
 // https://suap.ifrn.edu.br/edu/enviar_mensagem/
 
 import SUAP from "lib/suap";
-import Campus from "models/campus";
-import Diary, { autocompleteDiary } from "models/diary";
-import Year from "models/year";
+import Campus from "data/models/campus";
+import Diary from "data/models/diary";
+import Year from "data/models/year";
 import { controlSearchDiaryMessenger } from "../values/control";
-
-type diaryOptions = {
-  year: Year;
-  semester: number;
-  campus: Campus;
-};
+import { diaryOptions } from "data/types/diaryOptions";
+import { autocompleteDiary } from "data/types/autocompleteDiary";
 
 export default async function searchDiaries(
   term: string,
   cookie: string | string[],
   options: Partial<diaryOptions> = {}
 ) {
-  const result = await SUAP.setCookie(cookie).post("/json/edu/diario/", {
+  const suap = new SUAP();
+  const result = await suap.setCookie(cookie).post("/json/edu/diario/", {
     q: term,
     control: controlSearchDiaryMessenger,
     // Os valores precisam ir como string

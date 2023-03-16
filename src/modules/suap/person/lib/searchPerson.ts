@@ -1,12 +1,16 @@
 import SUAP from "lib/suap";
-import Person, { autocompletePerson } from "models/person";
+import Person from "data/models/person";
 import { controlSearchPeople } from "../values/control";
+import { autocompletePerson } from "data/types/autocompletePerson";
 
 export default async function searchPerson(
   term: string,
   cookie: string | string[]
-) {
-  const result = await SUAP.setCookie(cookie)
+): Promise<Person[]> {
+  const suap = new SUAP();
+
+  const result = await suap
+    .setCookie(cookie)
     .addHeaders({
       "Content-Type": "application/x-www-form-urlencoded",
       charset: "UTF-8",

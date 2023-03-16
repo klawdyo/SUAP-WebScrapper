@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import Token from "models/token";
-import User from "models/user";
+import Token from "data/models/token";
+import User from "data/models/user";
 import userRepository from "../user/user.repository";
 
 const prisma = new PrismaClient();
@@ -83,7 +83,7 @@ export default {
    */
   first: async (
     tokenId: number | null,
-    matricula: number | undefined
+    matricula: string | undefined
   ): Promise<Token | null> => {
     if (!tokenId && !matricula)
       throw { code: 500, message: "ID ou Matrícula precisam ser informados" };

@@ -1,4 +1,4 @@
-import User from "models/user";
+import User from "data/models/user";
 import { PrismaClient } from "@prisma/client";
 const db = new PrismaClient().user;
 
@@ -45,7 +45,7 @@ export default {
    * @returns
    */
   first: async (
-    matricula: number | null,
+    matricula: string | null,
     id?: number | undefined
   ): Promise<User | null> => {
     //
@@ -60,7 +60,9 @@ export default {
     if (id) {
       result = await db.findFirst({ where: { id } });
     } else if (matricula) {
-      result = await db.findFirst({ where: { matricula } });
+      result = await db.findFirst({
+        where: { matricula: matricula.toString() },
+      });
     }
 
     if (!result) return null;

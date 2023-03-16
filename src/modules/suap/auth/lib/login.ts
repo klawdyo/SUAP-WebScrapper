@@ -1,29 +1,31 @@
 import jwt from "jsonwebtoken";
 
 import SUAP from "lib/suap";
-import User from "models/user";
+import Campus from "data/models/campus";
+import User from "data/models/user";
+import searchPerson from "modules/suap/person/lib/searchPerson";
 import userRepository from "modules/suap/user/user.repository";
 import authRepository from "../auth.repository";
-import profileParser from "./profileParser";
+import employeeProfileParser from "../../user/lib/employeeProfileParser";
+import { loginResponse } from "data/types/authResponse";
+import Constants from "data/constants/constants";
 
-type tokenResponse = {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-};
-
-type loginResponse = {
-  user: User;
-  auth: tokenResponse;
-};
-
+/**
+ * Efetua o login no SUAP, verifica se o usuário está apto a efetuar login e
+ * retorna os dados do usuário e o token de autenticação, caso esteja.
+ *
+ * @param matricula
+ * @param password
+ * @returns
+ */
 export default async function login(
-  matricula: number,
+  matricula: string,
   password: string
 ): Promise<loginResponse> {
   try {
-    // Pega o cookie após login
-    const cookie = await SUAP.getCookie(matricula.toString(), password);
+    const suap = new SUAP();
+    // Efetua o login no suap e pega o cookie
+    const cookie = await suap.getCookie(matricula, password);
 
     // Pesquisa se o usuário já está cadastrado no banco de dados
     let user = await userRepository.first(matricula);
@@ -31,18 +33,37 @@ export default async function login(
     // Verifica se o usuário já está no banco de dados
     if (!user) {
       // Define o cookie e pega o conteúdo da página do usuário
-      const profileContent = await SUAP
+      const profileContent = await suap
         // Inclui o cookie
         .setCookie(cookie)
         // Realiza a requisição GET
         .get(`/rh/servidor/${matricula}/`);
 
       //
-      const profile = profileParser(profileContent);
+      const profile = employeeProfileParser(profileContent);
+
+      // Pega a informação de id no suap
+      const personData = await searchPerson(profile.matricula, cookie);
+
+      // Se encontrou os dados
+      if (personData.length) {
+        profile.suapId = personData[0].suapId;
+        profile.type = personData[0].type;
+        profile.sector = personData[0].sector;
+        profile.occupation = personData[0].occupation;
+      }
 
       //
       user = await userRepository.save(profile);
     }
+
+    // Se o usuário logado não tiver permissão para fazê-lo, encerre
+    // a tentativa de login.
+    if (!isAuthAllowed(user))
+      throw {
+        code: 401,
+        message: "Autenticação registra a servidores do campus Ipanguaçu",
+      };
 
     // Crio/Atualizo o token salvo no banco
     await authRepository.save(cookie, user);
@@ -54,7 +75,7 @@ export default async function login(
 
     return {
       user,
-      auth: {
+      token: {
         access_token: token,
         token_type: "Bearer",
         expires_in: authRepository._tokenTimeout,
@@ -63,4 +84,23 @@ export default async function login(
   } catch (error) {
     throw error;
   }
+}
+
+/**
+ * Define as restrições para login
+ * - Se o app é aceito somente por um determinado campus ou se é
+ * somente para servidores etc.
+ */
+function isAuthAllowed(user: User): Boolean {
+  // Se é somente para servidor
+  if (
+    Constants.IS_ALLOWED_ONLY_GOVERNMENT_EMPLOYEES &&
+    user.matricula.toString().length > 7
+  )
+    return false;
+
+  // Se não pertence aos campi permitidos
+  if (!Constants.ALLOWED_CAMPI.includes(user.campus?.short!)) return false;
+
+  return true;
 }

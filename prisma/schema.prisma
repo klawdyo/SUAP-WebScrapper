@@ -10,12 +10,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Usuário do SUAP
 model User {
-  id        Int      @id @default(autoincrement())
-  matricula Int      @unique
-  email     String   @unique
-  name      String
-  image     String
+  id         Int     @id @default(autoincrement())
+  suapId     Int? // id da pessoa do suap
+  matricula  String  @unique
+  email      String  @unique
+  name       String
+  cpf        String?
+  image      String
+  shortName  String? // Nome Usual do SUAP
+  campus     String? // Sigla do campus
+  type       String? // Tipo do usuário: terceirizado, aluno, servidor
+  sector     String? // Setor ao qual é ligado.
+  occupation String? // Cargo que ocupa
+
   // Relacionamento que contém a lista de tokens
   tokens    Token[]
   // Data/hora de criação e atualização
@@ -23,6 +32,7 @@ model User {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+// Autenticação que armazena o cookie do suap
 model Token {
   id        Int      @id @default(autoincrement())
   userId    Int      @unique

@@ -1,6 +1,4 @@
-import { Got, gotScraping, Headers } from "got-scraping";
-import cheerio from "cheerio";
-import User from "models/user";
+import { gotScraping, Headers } from "got-scraping";
 import { cookieParser, getCSRFMmiddlewareToken } from "./utils";
 import { URLSearchParams } from "url";
 
@@ -8,12 +6,12 @@ class SUAP {
   /**
    *
    */
-  static cookies?: string[] | undefined;
+  cookies?: string[] | undefined;
 
   /**
    *
    */
-  static _additionalHeaders: Record<string, any> = {};
+  _additionalHeaders: Record<string, any> = {};
 
   /**
    * URL de base
@@ -27,17 +25,18 @@ class SUAP {
    * @param params Parâmetros da url em formato de objeto
    * @returns html da página
    */
-  static async get(
+  async get(
     path: string,
     params?: any,
     cookies?: string[] | undefined
   ): Promise<string> {
     try {
-      const result = await gotScraping.get(this.url(path, params), {
+      const result = await gotScraping.get(SUAP.url(path, params), {
         headers: this.getHeaders(cookies),
       });
 
-      return result.body;
+      if (result.statusCode === 200) return result.body;
+      else throw { code: result.statusCode };
     } catch (error) {
       throw error;
     }
@@ -50,18 +49,21 @@ class SUAP {
    * @param params Parâmetros da url em formato de objeto
    * @returns html da página
    */
-  static async post(
+  async post(
     path: string,
     data: Record<string, any> | undefined,
     cookies?: string[] | undefined
   ): Promise<string> {
     try {
-      const result = await gotScraping.post(this.url(path), {
+      const result = await gotScraping.post(SUAP.url(path), {
         headers: this.getHeaders(cookies),
         form: data,
       });
 
-      return result.body;
+      console.log("POST", path, "->", result.statusCode, result.statusMessage);
+
+      if (result.statusCode === 200) return result.body;
+      else throw { code: result.statusCode };
     } catch (error) {
       throw error;
     }
@@ -70,22 +72,13 @@ class SUAP {
   /**
    * Retorna os cookies
    */
-  static async getCookie(matricula: String, password: String): Promise<string> {
+  async getCookie(matricula: string, password: string): Promise<string> {
     try {
       // Requisita a página inicial
       const result = await gotScraping.get(
         "https://suap.ifrn.edu.br/accounts/login/?next=/",
         {
           headers: this.getHeaders(),
-          // headers: {
-          //   "Content-Type": "application/x-www-form-urlencoded",
-          //   "user-agent":
-          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          //   Host: "suap.ifrn.edu.br",
-          //   Origin: "https://suap.ifrn.edu.br",
-          //   Pragma: "no-cache",
-          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          // },
         }
       );
 
@@ -97,7 +90,7 @@ class SUAP {
 
       // Cria o payload inicial para fazer o login
       const payload = {
-        csrfmiddlewaretoken: csrfToken ?? "",
+        csrfmiddlewaretoken: csrfToken,
         username: matricula,
         password: password,
         this_is_the_login_form: "1",
@@ -112,52 +105,13 @@ class SUAP {
           headers: this.addHeaders({
             "Content-Type": "application/x-www-form-urlencoded",
           }).getHeaders(initialCookies),
-          // headers: {
-          //   "Content-Type": "application/x-www-form-urlencoded",
-          //   "user-agent":
-          //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
-          //   Cookie: initialCookies,
-          //   Host: "suap.ifrn.edu.br",
-          //   Origin: "https://suap.ifrn.edu.br",
-          //   Pragma: "no-cache",
-          //   Referer: "https://suap.ifrn.edu.br/accounts/login/",
-          // },
           form: payload,
           followRedirect: false,
         }
       );
 
-      // Os cookies retornados após o login
-      const loggedCookies = login.headers["set-cookie"];
-
-      // Se existem cookies retornados
-      if (!loggedCookies)
-        throw {
-          code: 403,
-          message: "Erro ao realizar login",
-        };
-
-      // O SUAP inicialmente retorna 2 cookies: sessionid e csrftoken
-      // Estes 2 são retornados em todas as requisições, independente
-      // de estar ou não estar logado
-      // Já o cookie 'suap-control' só é retornado com o usuário logado
-      // Dessa forma, se ele for encontrado nos cookies retornados o
-      // login aconteceu com sucesso
-      const hasSuapControl = loggedCookies?.some((cookie) =>
-        cookie.startsWith("__Host-suap-control")
-      );
-
-      // Verifica se contém o cookie específico de logado do SUAP
-      if (hasSuapControl) {
-        return JSON.stringify(login.headers["set-cookie"]);
-      }
-      // Não foi encontrado o cookie suap-control nos cookies retornados
-      else {
-        throw {
-          code: 403,
-          message: "Usuário ou senha inválidos",
-        };
-      }
+      // Avalia se o usuário está logado apenas verificando os cookies
+      return this.checkHasLoggedCookies(login.headers["set-cookie"]);
 
       // S
     } catch (error) {
@@ -171,14 +125,14 @@ class SUAP {
    * @param cookies
    * @returns
    */
-  static setCookie(cookies?: string | string[] | undefined | null) {
+  setCookie(cookies?: string | string[] | undefined | null) {
     // Se for string
     if (
       cookies !== null &&
       cookies !== undefined &&
       typeof cookies === "string"
     ) {
-      cookies = cookies?.split(";");
+      cookies = cookies.split(";").map((item) => item.trim());
     }
 
     this.cookies = cookies ? cookies : [];
@@ -199,7 +153,7 @@ class SUAP {
    * @returns
    */
   static url(path: string, params?: any) {
-    const url = `${this.baseURL}${path}`;
+    const url = `${SUAP.baseURL}${path}`;
 
     if (params) {
       return `${url}?${new URLSearchParams(params)}`;
@@ -209,15 +163,49 @@ class SUAP {
   }
 
   /**
+   * Verifica se o usuário está logado apenas avaliando os cookies
+   */
+  checkHasLoggedCookies(cookies: string[] | undefined) {
+    try {
+      // Os cookies retornados após o login
+      // const loggedCookies = login.headers["set-cookie"];
+
+      // O SUAP inicialmente retorna 2 cookies: sessionid e csrftoken
+      // Estes 2 são retornados em todas as requisições, independente
+      // de estar ou não estar logado
+      // Já o cookie 'suap-control' só é retornado com o usuário logado
+      // Dessa forma, se ele for encontrado nos cookies retornados o
+      // login aconteceu com sucesso
+      const hasSuapControl = cookies!.some((cookie: string) =>
+        cookie.startsWith("__Host-suap-control")
+      );
+
+      // Verifica se contém o cookie específico de logado do SUAP
+      if (hasSuapControl) {
+        return JSON.stringify(cookies);
+      }
+      // Não foi encontrado o cookie suap-control nos cookies retornados
+      else {
+        throw {
+          code: 403,
+          message: "Usuário ou senha inválidos",
+        };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * Pega os cabeçalhos no padrão
    *
    * @param cookies
    * @returns
    */
-  static getHeaders(cookies?: string | string[] | undefined): Headers {
+  getHeaders(cookies?: string | string[] | undefined): Headers {
     let headers = {
       "user-agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
       Cookie: "",
 
       Host: "suap.ifrn.edu.br",
@@ -238,7 +226,13 @@ class SUAP {
     return headers;
   }
 
-  static addHeaders(headers: Record<string, any>) {
+  /**
+   * Acrescenta cabeçalhos aos que já estão incluídos na biblioteca
+   *
+   * @param headers Cabeçalhos a serem adicionados
+   * @returns
+   */
+  addHeaders(headers: Record<string, any>) {
     this._additionalHeaders = headers;
 
     return this;

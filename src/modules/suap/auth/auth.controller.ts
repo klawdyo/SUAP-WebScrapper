@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import User from "data/models/user";
 
 import userRepository from "../user/user.repository";
 import authRepository from "./auth.repository";
@@ -23,6 +24,22 @@ export default class AuthController {
 
       //
       return response.success(result, "Login realizado com sucesso");
+    } catch (error) {
+      return response.exception(error);
+    }
+  }
+  /**
+   * Efetua logout
+   *
+   * Method: POST
+   * URL: /suap/auth/logout
+   */
+  static async logout(request: Request, response: Response) {
+    try {
+      const result = await authRepository.delete(null, request.user as User);
+
+      //
+      return response.success(result, "Logout realizado com sucesso");
     } catch (error) {
       return response.exception(error);
     }

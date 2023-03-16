@@ -4,31 +4,68 @@ import messages from "./messages";
 import { ValidatorSchema, ValidatorData } from "./types";
 
 export default class Validator {
-  static _schema?: ValidatorSchema;
-  static data?: ValidatorData;
+  /**
+   * Armazena o construtor
+   */
+  _schema?: ValidatorSchema;
 
-  static setSchema(schema: ValidatorSchema) {
-    this._schema = schema;
+  /**
+   * Armazena os dados que serão validados
+   */
+  _data?: ValidatorData;
+
+  /**
+   * Constructor
+   *
+   * @param schema
+   * @returns
+   */
+  constructor(schema: Joi.PartialSchemaMap) {
+    this._setSchema(schema);
     return this;
   }
 
-  static setData(data: ValidatorData) {
-    this.data = data;
-    return this;
+  /**
+   * Define o schema a ser validado
+   *
+   * @example
+   * Validator.schema((v)=>({
+   *    name: v.string().required(),
+   * }))
+   *
+   * @param fn
+   * @returns
+   */
+  static schema(fn: Function) {
+    const schema = fn(Joi);
+
+    const obj = new Validator(schema);
+
+    return (request: Request, response: Response, next: NextFunction) =>
+      obj.middleware(request, response, next);
   }
 
-  static async isValid() {
+  /**
+   * Verifica se o schema atual é válido
+   *
+   * @returns
+   */
+  async isValid() {
     try {
-      await this._schema?.validateAsync(this.data);
+      await this._schema?.validateAsync(this._data);
       return true;
     } catch (error) {
       return false;
     }
   }
 
-  static async validate() {
+  /**
+   * Valida o schema atual e retorna os erros caso não seja válido
+   * @returns
+   */
+  async validate() {
     try {
-      return await this._schema?.validateAsync(this.data, {
+      return await this._schema?.validateAsync(this._data, {
         abortEarly: false,
       });
     } catch (error) {
@@ -36,25 +73,13 @@ export default class Validator {
     }
   }
 
-  // static _schema?: ValidatorSchema;
-
-  // constructor(schema: ValidatorSchema) {
-  //   this._schema = schema;
-  // }
-
-  static meupau(schema: Joi.PartialSchemaMap) {
-    Joi.preferences({
-      messages: {
-        "number.required": "preeencha",
-        number: "recea",
-        "number.base": "recebaa",
-      },
-    });
-
-    return Joi.object(schema);
-  }
-
-  static schema(schema: Joi.PartialSchemaMap) {
+  /**
+   * Aplica um schema de validação no objeto atual
+   *
+   * @param schema
+   * @returns
+   */
+  _setSchema(schema: Joi.PartialSchemaMap) {
     this._schema = Joi
       // Inclui o objeto do esquema
       .object(schema)
@@ -65,20 +90,23 @@ export default class Validator {
     return this;
   }
 
-  static async middleware(
-    request: Request,
-    response: Response,
-    next: NextFunction
-  ) {
+  /**
+   * Aplica um middleware de validação em uma rota
+   *
+   * @param request
+   * @param response
+   * @param next
+   * @returns
+   */
+  async middleware(request: Request, response: Response, next: NextFunction) {
     try {
-      Validator.setData(request.body);
+      this._data = request.body;
 
+      //
       if (!this._schema)
         throw { code: 500, message: "Esquema de validação não definido" };
 
-      Validator.setSchema(this._schema);
-
-      const body = await Validator.validate();
+      const body = await this.validate();
       request.body = body;
 
       return next();
