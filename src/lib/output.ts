@@ -192,6 +192,7 @@ export default class Output {
           "jwt malformed": "Token de autenticação inválido", // token não tá no padrão separado por pontos
           "invalid token": "Token de autenticação inválido", // token não está válido
           "jwt expired": "Token de autenticação expirado", // token expirado
+          "invalid signature": "Token de autenticação inválido", // token com assinatura errada
         };
 
         return this.error(
